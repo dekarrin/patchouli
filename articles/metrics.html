@@ -253,7 +253,8 @@
 		<p>
 			Add an inbound rule for HTTP and a rule for HTTPS; the fields should auto-populate, but
 			make sure both rules contain the sources “All IPv4” and “All IPv6”. This will allow
-			Grafana to be accessed over the web.
+			Grafana to be accessed over the web, as well as enable Certbot for automatic TLS
+			certificate renewal.
 		</p>
 		<p>
 			Also add a “Custom”-type inbound rule for TCP traffic under port 8086, again making sure
@@ -479,13 +480,13 @@ uid=1000(dekarrin) gid=1000(dekarrin) groups=1000(dekarrin),27(sudo)</p>
 		</p>
 		<p class="code">root@meiling:~# exit
 logout
-Connection to meiling.dekarrin.com closed.
-[z002v4m@dca9047d6bab 09:27:43 ~]$ ssh dekarrin@meiling.dekarrin.com
-dekarrin@meiling.dekarrin.com's password:
+Connection to meiling.example.com closed.
+[z002v4m@dca9047d6bab 09:27:43 ~]$ ssh dekarrin@meiling.example.com
+dekarrin@meiling.example.com's password:
 …
 dekarrin@meiling:~$</p>
 		<p>
-			Double check that sudo is working properly with a test command:
+			Double-check that sudo is working properly with a test command:
 		</p>
 		<p class="code">dekarrin@meiling:~$ sudo echo test
 [sudo] password for dekarrin:
@@ -512,7 +513,123 @@ dekarrin@meiling:~$</p
 			set up.
 		</p>
 		<h3 id="lets-encrypt">Obtain a TLS Certificate with Let's Encrypt</h3>
-		
+		<p>
+			In order to authenticate your server to the internet, as well as encrypt your metrics
+			traffic and dashboard traffic, you will want to use TLS certificate encryption. TLS/SSL
+			certificates are most commonly known for being the method by which HTTPS operates, but
+			they are used in a variety of other environments as well.
+		</p>
+		<p>
+			<a href="https://letsencrypt.org/">Let's Encrypt</a> is a Certificate Authority that can
+			be used to obtain a TLS certificate ree-of-charge. This is an exciting development in
+			making the internet a more secure place; in the past, public Certificate Authorities
+			were mainly government and regulatory bodies, and all of them charged a fee for
+			processing certificate applications and renewals.
+		</p>
+		<p>
+			First, you need to install Certbot, which will automate the renewal and request process
+			for certificates. Add the Ubuntu PPA for Certbot to APT's packages:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo apt-add-repository ppa:certbot/certbot
+[sudo] password for dekarrin:
+ This is the PPA for packages prepared by Debian Let's Encrypt Team and backported for Ubuntu(s).
+ More info: https://launchpad.net/~certbot/+archive/ubuntu/certbot
+Press [ENTER] to continue or ctrl-c to cancel adding it
+
+gpg: keyring `/tmp/tmpy6_m4x5_/secring.gpg' created
+gpg: keyring `/tmp/tmpy6_m4x5_/pubring.gpg' created
+gpg: requesting key 75BCA694 from hkp server keyserver.ubuntu.com
+gpg: /tmp/tmpy6_m4x5_/trustdb.gpg: trustdb created
+gpg: key 75BCA694: public key "Launchpad PPA for certbot" imported
+gpg: Total number processed: 1
+gpg:               imported: 1  (RSA: 1)
+OK</p>
+		<p>
+			Then, update the package list.
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo apt-get update
+Hit:1 https://repos.sonar.digitalocean.com/apt main InRelease
+Get:2 http://security.ubuntu.com/ubuntu xenial-security InRelease [102 kB]
+Hit:3 http://nyc2.mirrors.digitalocean.com/ubuntu xenial InRelease
+Get:4 http://ppa.launchpad.net/certbot/certbot/ubuntu xenial InRelease [24.3 kB]
+Get:5 http://nyc2.mirrors.digitalocean.com/ubuntu xenial-updates InRelease [102 kB]
+Get:6 http://nyc2.mirrors.digitalocean.com/ubuntu xenial-backports InRelease [102 kB]
+Get:7 http://nyc2.mirrors.digitalocean.com/ubuntu xenial-updates/main amd64 Packages [724 kB]
+Get:8 http://nyc2.mirrors.digitalocean.com/ubuntu xenial-updates/universe amd64 Packages [588 kB]
+Get:9 http://ppa.launchpad.net/certbot/certbot/ubuntu xenial/main amd64 Packages [14.9 kB]
+Get:10 http://ppa.launchpad.net/certbot/certbot/ubuntu xenial/main Translation-en [9,252 B]
+Fetched 1,667 kB in 0s (1,844 kB/s)
+Reading package lists... Done</p>
+		<p>And then install Certbot.</p>
+		<p class="code">dekarrin@meiling:~$ sudo apt-get install certbot</p>
+		<p>
+			Now execute Certbot, and use it to request a certificate from Let's Encrypt. Replace the
+			domain at the end of the following command with the full domain that you have set up for
+			your instance:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo certbot certonly --standalone --preferred-challenges http -d meiling.example.com</p>
+		<p>
+			Enter an email address when prompted and answer the other prompts appropriately. The
+			challenge server will run, and when it is completed you will see a message indicating
+			that your certificates have been set up.
+		</p>
+		<p>
+			Next, you will need to add a script that will properly set the permissions on the
+			certificates after renewal has completed. Open a new file in the renewal hooks section
+			of the local Let's Encrypt config.
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo nano /etc/letsencrypt/renewal-hooks/deploy/set-cert-permissions.sh</p>
+		<p>
+			Then copy the following content into the file:
+		</p>
+		<p class="code">#!/bin/sh
+
+if [ "$(id -u)" -ne 0 ]
+then
+  "Must be run as root" >&2
+  exit 1
+fi
+
+chgrp ssl-cert /etc/letsencrypt/live
+chgrp -R ssl-cert /etc/letsencrypt/archive
+chmod 750 /etc/letsencrypt/live
+chmod 750 /etc/letsencrypt/archive
+chgrp ssl-cert "$RENEWED_LINEAGE"
+chmod 750 "$RENEWED_LINEAGE"
+
+for x in $(ls "$RENEWED_LINEAGE")
+do
+  chgrp ssl-cert "$RENEWED_LINEAGE/$x"
+  chmod 654 "$RENEWED_LINEAGE/$x"
+done
+#systemctl restart influxdb
+#systemctl restart grafana-server
+#systemctl restart telegraf</p>
+		<p>
+			Once we are done setting up the components of our server, you will go back and uncomment
+			them in the file, but for now, keep them commented.
+		</p>
+		<p>
+			Now that the script is in place, run certbot again and force renewal of your
+			certificates so the deploy script has a chance to run.
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo certbot renew --force-renew</p>
+		<p>
+			And that's it! The certificates are now ready to go, and you can start setting up the
+			components of the metrics server.
+		</p>
+		<h2 id="influxdb">Setting Up InfluxDB</h2>
+		<h2 id="telegraf-client">Setting Up Telegraf on the Clients</h2>
+		<h2 id="telegraf-server">Setting Up Telegraf on the Metrics Server</h2>
+		<h3 id="install-telegraf">Install Telegraf</h3>
+		<h3 id="install-pytelegrafhttp">Install PyTelegrafHTTP</h3>
+		<h2 id="grafana">Setting Up Grafana</h2>
+		<h3 id="grafana-install">Install Grafana</h3>
+		<h3 id="grafana-charts">Create Charts</h3>
+		<h2 id="whats-next">Where To Go From Here</h2>
+		<h3 id="alerting">Alerting</h3>
+		<h3 id="ifttt">Using IFTTT for Phone Notifications</h3>
+		<h3 id="backups">Backups</h3>
 	</main>
 	<p class="backlink">
 		<a href="../"><img src="../patchoulismall.png" width="20px">Back to Archive</a>
