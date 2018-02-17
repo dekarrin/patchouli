@@ -56,7 +56,12 @@
 					<li><a href="#lets-encrypt">Obtain a TLS Certificate with Let's Encrypt</a></li>
 				</ul>
 			</li>
-			<li><a href="#influxdb">Setting up InfluxDB</a></li>
+			<li><a href="#influxdb">Setting up InfluxDB</a>
+				<ul>
+					<li><a href="#influxdb-install">Install InfluxDB</a></li>
+					<li><a href="#influxdb-setup">Set Up Database and InfluxDB Users</a></li>
+				</ul>
+			</li>
 			<li><a href="#telegraf-client">Setting up Telegraf on the Clients</a></li>
 			<li><a href="#telegraf-server">Setting up Telegraf on the Metrics Server</a>
 				<ul>
@@ -610,6 +615,10 @@ done
 			them in the file, but for now, keep them commented.
 		</p>
 		<p>
+			Give the script execution permission so that Certbot can run it.
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo chmod 744 /etc/letsencrypt/renewal-hooks/deploy/set-cert-permissions.sh</p>
+		<p>
 			Now that the script is in place, run certbot again and force renewal of your
 			certificates so the deploy script has a chance to run.
 		</p>
@@ -619,6 +628,119 @@ done
 			components of the metrics server.
 		</p>
 		<h2 id="influxdb">Setting Up InfluxDB</h2>
+		<p>
+			InfluxDB is the storage backend that you will be using to store metrics on. It is a
+			NoSQL database that has a time-series structure which makes it suitable for storing
+			metrics very efficiently.
+		</p>
+		<h3 id="influxdb-install">Install InfluxDB</h3>
+		<p>
+			First, add the InfluxData repository to APT.
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo su
+root@meiling:/home/dekarrin# curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+root@meiling:/home/dekarrin# source /etc/lsb-release
+root@meiling:/home/dekarrin# echo "deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+root@meiling:/home/dekarrin# exit</p>
+		<p>
+			Next, update the package lists.
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo apt-get update</p>
+		<p>
+			And then install InfluxDB.
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo apt-get install influxdb</p>
+		<p>
+			Before starting up InfluxDB, we need to modify the configuration settings. Open the
+			config file as root:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo nano /etc/influxdb/influxdb.conf</p>
+		<p>
+			Go to the <span class="code">[retention]</span> section and set 'enabled' to 'true' and
+			set 'check-interval' to "30m". This will enable rentention policies in InfluxDB, which
+			allow you to set how long data persists before being deleted. This section of config
+			does not actually set any retention policies; it just makes it so you can use them.
+		</p>
+		<p class="code">[retention]
+  # Determines whether retention policy enforcement enabled.
+  enabled = true
+
+  # The interval of time when retention policy enforcement checks run.
+  check-interval = "30m"</p>
+  		<p>
+			Under the <span class="code">[http]</span> section, uncomment and set the variables to
+			the values listed. This will enable using InfluxDB over HTTP.
+		</p>
+		<p class="code">[http]
+  # Determines whether HTTP endpoint is enabled.
+  enabled = true
+
+  # The bind address used by the HTTP service.
+  bind-address = ":8086"
+
+  # Determines whether user authentication is enabled over HTTP/HTTPS.
+  auth-enabled = true
+
+  # The default realm sent back when issuing a basic auth challenge.
+  realm = "InfluxDB"</p>
+  		<p>
+			Also in the <span class="code">[http]</span> section, uncomment and set the variables to
+			the correct values to enable HTTPS encryption/authentication. Be sure to change the
+			domain name in the examples to match your instance's domain name.
+		</p>
+		<p class="code">  # Determines whether HTTPS is enabled.
+  https-enabled = true
+
+  # The SSL certificate to use when HTTPS is enabled.
+  https-certificate = "/etc/letsencrypt/live/meiling.example.com/fullchain.pem"
+
+  # Use a separate private key location.
+  https-private-key = "/etc/letsencrypt/live/meiling.example.com/privkey.pem"</p>
+		<p>
+			In the <span class="code">[subscriber]</span> section, uncomment and set 'enabled' to
+			false. The subscription settings are used by Kapacitor, a front-end offering by
+			InfluxData. Since this guide does not use Kapacitor, it is better to disable subscribers
+			entirely in order to eliminate the overhead.
+		</p>
+		<p class="code">[subscriber]
+  # Determines whether the subscriber service is enabled.
+  enabled = false</p>
+		<p>
+			All other values can be left to their defualts.
+		</p>
+		<p>
+			Next, add the influxdb user to the 'ssl-cert' group in order to give it access to the
+			SSL/TLS certificates.
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo usermod -a -G ssl-cert influxdb</p>
+		<p>
+			Finally, start InfluxDB.
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo systemctl start influxdb</p>
+		<p>
+			Make sure InfluxDB started successfully. You should see <span class="code">Active: active (running)</span>
+			somewhere in the output:
+		</p>
+		<p class="code">dekarrin@meiling:~$ systemctl status influxdb
+● influxdb.service - InfluxDB is an open-source, distributed, time series database
+   Loaded: loaded (/lib/systemd/system/influxdb.service; enabled; vendor preset: enabled)
+   Active: active (running) since Sat 2018-02-17 21:05:11 UTC; 2min 12s ago</p>
+		<p>
+			Now that InfluxDB is running, edit the deploy script for Let's Encrypt and uncomment
+			the line that restarts InfluxDB:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo nano /etc/letsencrypt/etc/letsencrypt/renewal-hooks/deploy/set-cert-permissions.sh</p>
+		<p class="code">  chmod 654 "$RENEWED_LINEAGE/$x"
+done
+systemctl restart influxdb
+#systemctl restart grafana-server
+#systemctl restart telegraf</p>
+		<h3 id="influxdb-setup">Set Up Database and InfluxDB Users</h3>
+		<p>
+			Now that InfluxDB has been installed and started, you will need to connect to the
+			database and set up the databases and users.
+		</p>
+		
 		<h2 id="telegraf-client">Setting Up Telegraf on the Clients</h2>
 		<h2 id="telegraf-server">Setting Up Telegraf on the Metrics Server</h2>
 		<h3 id="install-telegraf">Install Telegraf</h3>

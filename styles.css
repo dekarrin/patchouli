@@ -77,8 +77,9 @@ a:hover, a:focus, a:visited:hover, a:visited:focus {
 
 p.code {
 	border: 1px solid #909090;
-}
+	overflow: auto;
 
+}
 
 h1, h2, h3 {
 	line-height: 1.2;
