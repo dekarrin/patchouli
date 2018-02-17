@@ -789,7 +789,7 @@ InfluxDB shell version: 1.4.2
 > GRANT READ ON hath_client_network_health TO grafana;
 > GRANT READ ON hath_client_metrics TO grafana;</p>
 		<p>
-			The final thing to do is to set up retention policies for data, if desired. This will
+			The last thing to do is to set up retention policies for data, if desired. This will
 			give all data a time-to-live before it is automatically purged from the database.
 			Setting up retention policies is beyond the scope of this guide, but if you wish to set
 			them up, see the info at the <a href="https://docs.influxdata.com/influxdb/v1.4/guides/downsampling_and_retention/">InfluxData</a>
@@ -800,8 +800,96 @@ InfluxDB shell version: 1.4.2
 			metrics server is now ready to start receiving data!
 		</p>
 		<h2 id="telegraf-client">Setting Up Telegraf on the Clients</h2>
+		<p>
+			Telegraf is a program that collects system metrics and forwards them to a data backend.
+			In this section of the guide, you will set up telegraf on your Hath clients.
+		</p>
+		<p>
+			First, install Telegraf. Go to the
+			<a href="https://docs.influxdata.com/telegraf/v1.5/introduction/installation/">guide on InfluxData</a>
+			and follow the instructions specific to the system that the hath client is installed on.
+		</p>
+		<p>
+			Then, take the <a href="../supplementary/telegraf-hath.txt">sample configuration file</a>
+			and copy its contents to the telegraf configuration file. On Debian-like Linux distros,
+			this will be at /etc/telegraf/telegraf.conf.
+		</p>
+		<p>
+			Edit the configuration file section <span class="code">[[outputs.influxdb]]</span>. Set
+			the url in the 'urls' option to point to your server (note that you must include the
+			port number at the end, as well as the https at the beginning), and update the
+			'password' option to be what you set the password of 'hath_client_telegraf' to.
+		</p>
+		<p>
+			Edit the configuration file section <span class="code">[agent]</span>. Set the
+			'hostname' option to a unique value on each hath client. For example, I gave my hath
+			client the name 'flandre', which will appear in charts later on in the tutorial. If you
+			have more than one hath client, make sure this is set to a different value on each one.
+		</p>
+		<p>
+			Start/Restart the Telegraf service. On Debian-like distros, this is done with
+			<span class="code">sudo systemctl restart telegraf</span>. On other systems, consult the
+			Telegraf documentation to find out how to start the service.
+		</p>
+		<p>
+			Confirm that Telegraf is running. On Debian-like distros, this is done with
+			<span class="code">sudo systemctl status telegraf</span>.
+		</p>
+		<p>
+			If all has gone well, Telegraf should now be running on the hath system.
+		</p>
 		<h2 id="telegraf-server">Setting Up Telegraf on the Metrics Server</h2>
+		<p>
+			In order to report statistics on the clients, such as hath-rate, files served, or
+			client trust/quality, you need to set up a metrics collection script to scrape the
+			Hentai@Home info page and relay the metrics to InfluxDB. This tutorial will use a
+			custom python system called PyTelegrafHTTP to fetch the info, and then Telegraf will
+			handle sending it to InfluxDB.
+		</p>
+		<p>
+			It's important that this system be set up on a server that is separate from all of your
+			hath clients. This tutorial will assume that you are setting it up on the metrics
+			server, so go ahead and log into that box.
+		</p>
 		<h3 id="install-telegraf">Install Telegraf</h3>
+		<p>
+			First, add the repository to the package manager:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo su
+root@meiling:/home/dekarrin# curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+root@meiling:/home/dekarrin# source /etc/lsb-release
+root@meiling:/home/dekarrin# echo "deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+root@meiling:/home/dekarrin# exit</p>
+		<p>
+			Then, update the package list:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo apt-get update</p>
+		<p>
+			And then install Telegraf:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo apt-get install telegraf</p>
+		<p>
+			Next, take the contents of the <a href="../supplementary/telegraf-server.txt">sample server telegraf config file</a>
+			and copy the contents to /etc/telegraf/telegraf.conf.
+		</p>
+		<p>
+			Edit the config file and make sure to set both urls properties to point at your server;
+			make sure to keep the port number and the https in the URL. Also update both 'password'
+			properties and set them to the password of the "hath_netstats" user.
+		</p>
+		<p>
+			Start up Telegraf and ensure it is running:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo systemctl start telegraf
+dekarrin@meiling:~$ systemctl status telegraf
+● telegraf.service - The plugin-driven server agent for reporting metrics into InfluxDB
+   Loaded: loaded (/lib/systemd/system/telegraf.service; enabled; vendor preset: enabled)
+   Active: active (running) since Sat 2018-02-17 22:48:36 UTC; 15min ago</p>
+   		<p>
+			Telegraf has now been installed; now you need to install the scraper tool to get the
+			metrics from the E-Hentai server.
+		</p>
+
 		<h3 id="install-pytelegrafhttp">Install PyTelegrafHTTP</h3>
 		<h2 id="grafana">Setting Up Grafana</h2>
 		<h3 id="grafana-install">Install Grafana</h3>
