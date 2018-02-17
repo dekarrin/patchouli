@@ -46,6 +46,14 @@ a:hover, a:focus, a:visited:hover, a:visited:focus {
 	font-weight: normal;
 }
 
+.article h3 {
+	font-family: "Arial", sans-serif;
+	font-size: 16pt;
+	text-align: left;
+	font-style: normal;
+	font-weight: normal;
+}
+
 .article .subtitle {
 	color: #666666;
 	font-family: "Arial", sans-serif;
@@ -55,6 +63,20 @@ a:hover, a:focus, a:visited:hover, a:visited:focus {
 	margin-bottom: 1px;
 	font-style: normal;
 	font-weight: normal;
+}
+
+.code {
+	white-space: pre;
+	background: #555555;
+	color: #efefef;
+	font-family: "Courier New", monospace;
+	border-radius: 4px 4px;
+	font-size: smaller;
+	padding: 0 4px;
+}
+
+p.code {
+	border: 1px solid #909090;
 }
 
 

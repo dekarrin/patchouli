@@ -52,7 +52,7 @@
 			<li><a href="#basic-setup">Basic Server Setup</a>
 				<ul>
 					<li><a href="#basic-utils">Install Basic Utilities</a></li>
-					<li><a href="#create-users">Create Users and Groups</a></li>
+					<li><a href="#users-and-groups">Create Users and Groups</a></li>
 					<li><a href="#lets-encrypt">Obtain a TLS Certificate with Let's Encrypt</a></li>
 				</ul>
 			</li>
@@ -341,6 +341,178 @@
 		<p>
 			Now it’s time to move on to setting up the server.
 		</p>
+		<h2 id="basic-setup">Basic Server Setup</h2>
+		<p>
+			So, now we’ve got a box somewhere on the internet. Awesome! The next step is to log in
+			to it and start configuring everything. Before we jump to the metrics stack, we’ll need
+			to do some basic server setup first.
+		</p>
+		<p>
+			If you’ve been following the guide so far, you won’t yet have any users set up, so log
+			into your instance as the user ‘root’ (root@your-box-address).
+		</p>
+		<h3 id="basic-utils">Install Basic Utilities</h3>
+		<p>
+			First, as soon as you’re logged in, make sure all of the existing software is up to
+			date. If your instance’s distro is Ubuntu or another Debian-like, follow the
+			instructions in this guide; otherwise, do whatever the equivalent for your distro is. If
+			your instance is running on a non-Linux OS, god help you.
+		</p>
+		<p>
+			Install updates to the package lists:
+		</p>
+		<p class="code">root@meiling:~# apt-get update</p>
+		<p>
+			Now install any available updates:
+		</p>
+		<p class="code">root@meiling:~# apt-get upgrade</p>
+		<p>
+			Type Y if required to continue with the install.
+		</p>
+		<p>
+			If there were messages during the update about packages that are no longer required, you
+			can remove them after the update completes:
+		</p>
+		<p class="code">root@meiling:~# apt-get autoremove</p>
+		<p>
+			Next, we’ll install some programs that will make life easier on this system.
+		</p>
+		<p>
+			If you do not have 'sudo' on your system, install it now. You can test whether you have
+			sudo by trying to use it. If you don’t have it, you will see the following:
+		</p>
+		<p class="code">sudo: command not found</p>
+		<p>
+			If you don't have it, go ahead and install it now.
+		</p>
+		<p class="code">root@meiling:~# apt-get install sudo</p>
+		<p>
+			Next, you’ll want a text editor. For simplicity’s sake, this guide will use the ‘nano'
+			editor, but if you prefer, you can install vim, emacs, or whatever you want.
+		</p>
+		<p class="code">root@meiling:~# apt-get install nano</p>
+		<p>
+			In all likelihood, it will already be installed.
+		</p>
+		<p>
+			That’s it for initial software and set up! If you would like, I’d also recommend
+			installing `screen` or `tmux` so you can keep your session open even if you lose your
+			connection while you are SSH’d into your box, but it is by no means necessary. Next,
+			we’ll move on to creating a user for yourself.
+		</p>
+		<h3 id="#users-and-groups">Create Users and Groups</h3>
+		<p>
+			Right now, you are logged into your system as the root user. This is generally not a
+			good idea, because the root user is unrestricted and if it were compromised, the
+			attacker would have full system access. You really only need to be logged in as root in
+			special circumstances; for general use, you’ll want to create a new user for yourself on
+			your box that can only perform restricted, ‘regular’ actions. We’ll also set it up so
+			the user can elevate its permissions temporarily as needed with the ‘sudo’ command.
+		</p>
+		<p>
+			First, create the new user for yourself. For the username, pick something that is easy
+			to remember. It doesn’t have to be secret; for me personally, I just use ‘dekarrin’.
+			Another common method of creating usernames is just your initials; for me, this would be
+			‘rcn’, for Richard Stallman, it would be ‘rms’. No matter what, unless you want your
+			life to be difficult, make sure it’s all lowercase and has no punctuation, and create
+			the user.
+		</p>
+		<p class="code">root@meiling:~# adduser dekarrin</p>
+		<p>
+			You will prompted to set a password for the new user. <span class="warning">SET IT TO
+			SOMETHING OTHER THAN THE ROOT PASSWORD.</span> If you don’t, setting up the additional
+			user is completely pointless.
+		</p>
+		<p>
+			You may be prompted for additional information on the new user; feel free to fill it in
+			as you wish or just leave fields blank and hit enter.
+		</p>
+		<p>
+			Once you are done, confirm that the new user exists by running the `id` command. You
+			should see something along the lines of the following:
+		</p>
+		<p class="code">root@meiling:~# id dekarrin
+uid=1000(dekarrin) gid=1000(dekarrin) groups=1000(dekarrin)</p>
+		<p>
+			If you see <span class="code">id: ‘dekarrin’: no such user</span>, then the user has not
+			been set up properly, and you’ll need to try again.
+		</p>
+		<p>
+			Next, add your user to the supplementary group ‘sudo’ to allow it to run the sudo
+			command. The sudo command is used for performing privileged action as an unprivileged
+			user; it is very necessary unless you want to be switching to the root user every time
+			you need to do system config.
+		</p>
+		<p class="code">root@meiling:~# usermod -a -G sudo dekarrin</p>
+		<p>
+			Confirm that the change worked by running `id` and making sure that sudo appears in the
+			groups that the user is a member of.
+		</p>
+		<p class="code">root@meiling:~# id dekarrin
+uid=1000(dekarrin) gid=1000(dekarrin) groups=1000(dekarrin),27(sudo)</p>
+		<p>
+			Now, you need to make sure that the ‘sudo’ group is authorized to execute sudo. This
+			will be in the ‘sudoers’ configuration file. The exact location may vary by distro, but
+			that file should not be modified directly anyways. Instead, we will use the ‘visudo’
+			command, which will allow us to edit the config with nano, and once we are done, it will
+			make sure that the edited contents are valid before using it.
+		</p>
+		<p class="code">root@meiling:~# visudo</p>
+		<p>
+			Scroll through the file using the arrow keys, and make sure that the line
+			<span class="code">%sudo   ALL=(ALL:ALL) ALL</span> exists somewhere in the file.
+		</p>
+		<p>
+			If it exists, but has a hash character in front of it (‘#’), remove the hash character.
+			If the line does not exist, scroll to the bottom of the file and add it.
+		</p>
+		<p>
+			When done, use the keyboard command given on the bottom of the screen to ‘Write-out’
+			(save) the file. The ‘^’ character in the shortcuts refers to the ‘Control’ key. The
+			command for writing out in nano is ^O (Control-O). Hit it and you will then be prompted
+			to give a name for the file. Leave it as the default and hit enter, then do ^X to exit
+			from nano.
+		</p>
+		<p>
+			Now, your new user is set up and can use sudo. Log out of the instance with ‘exit’, and
+			log back in as your new user (“yournewuser@yourserver”).
+		</p>
+		<p class="code">root@meiling:~# exit
+logout
+Connection to meiling.dekarrin.com closed.
+[z002v4m@dca9047d6bab 09:27:43 ~]$ ssh dekarrin@meiling.dekarrin.com
+dekarrin@meiling.dekarrin.com's password:
+…
+dekarrin@meiling:~$</p>
+		<p>
+			Double check that sudo is working properly with a test command:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo echo test
+[sudo] password for dekarrin:
+test
+dekarrin@meiling:~$</p
+		<p>
+			Depending on the distro, it’s possible that the first time you use sudo, you will be
+			presented with a prompt that asks you to accept the responsibility of being able to use
+			the sudo command. That’s fine, accept the prompt.
+		</p>
+		<p>
+			From now on, it is a good idea to never log in as the root user except in emergencies.
+			For any further steps for the rest of this guide, make sure to be logged in as your new
+			user, not as the root user.
+		</p>
+		<p>
+			One last thing is required before all the users and groups are set up. For the SSL/TLS
+			certificates on your server, you will want to create a group that will own them so that
+			root is not the only one able to access/use them.
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo groupadd ssl-cert</p>
+		<p>
+			Now you are done with user/group set up and can move on to getting your SSL certificates
+			set up.
+		</p>
+		<h3 id="lets-encrypt">Obtain a TLS Certificate with Let's Encrypt</h3>
+		
 	</main>
 	<p class="backlink">
 		<a href="../"><img src="../patchoulismall.png" width="20px">Back to Archive</a>
