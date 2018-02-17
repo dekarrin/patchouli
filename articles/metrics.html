@@ -889,8 +889,48 @@ dekarrin@meiling:~$ systemctl status telegraf
 			Telegraf has now been installed; now you need to install the scraper tool to get the
 			metrics from the E-Hentai server.
 		</p>
-
 		<h3 id="install-pytelegrafhttp">Install PyTelegrafHTTP</h3>
+		<p>
+			PyTelegrafHTTP is a custom tool that I wrote in order to scrape data from arbitrary
+			websites and send them to Telegraf. It only has an install script for a Debian-like
+			environment; other environments will need to have it installed manually.
+		</p>
+		<p>
+			First, install git so you can download the latest version of PyTelegrafHTTP:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo apt-get install git</p>
+		<p>
+			PyTelegrafHTTP requires Python3, so install it now:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo apt-get install python3</p>
+		<p>
+			The last dependency for installing PyTelegrafHTTP is pip, install that as well:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo apt-get install python3-pip</p>
+		<p>
+			Now pull the PyTelegrafHTTP repository:
+		</p>
+		<p class="code">dekarrin@meiling:~$ git clone https://github.com/dekarrin/pytelegrafhttp.git</p>
+		<p>
+			CD into the repository folder, and execute the install script for Debian/Ubuntu systems.
+			If you are not on a Debian/Ubuntu system, you will need to find an alternative way of
+			setting up the file. Otherwise, go ahead and execute the script. The parameter at the
+			end is the user to install the script as, which at the time, must be the root user:
+		</p>
+		<p class="code">dekarrin@meiling:~$ cd pytelegrafhttp
+dekarrin@meiling:~/pytelegrafhttp$ sudo scripts/install.sh root
+...
+main config located in '/etc/pytelegrafhttp/config.py'
+Unit file symlinked as 'pytelegrafhttp.service'.
+To start, do `systemctl start pytelegrafhttp`</p>
+		<p>
+			Now you will need to edit the config file for PyTelegrafHTTP. An explanation of the
+			config file format is far beyond the scope of this guide; it is a normal python module,
+			but the variables themselves are moderately complex. Instead, copy the contents of the
+			<a href="../supplementary/pytelegrafhttp-config.py">example PyTelegrafHTTP config</a>
+			into the real config file at <span class="code">/etc/pytelegrafhttp/config.py</span>.
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo nano /etc/pytelegrafhttp/config.py</p
 		<h2 id="grafana">Setting Up Grafana</h2>
 		<h3 id="grafana-install">Install Grafana</h3>
 		<h3 id="grafana-charts">Create Charts</h3>
