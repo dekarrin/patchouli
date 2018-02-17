@@ -732,15 +732,73 @@ root@meiling:/home/dekarrin# exit</p>
 		<p class="code">dekarrin@meiling:~$ sudo nano /etc/letsencrypt/etc/letsencrypt/renewal-hooks/deploy/set-cert-permissions.sh</p>
 		<p class="code">  chmod 654 "$RENEWED_LINEAGE/$x"
 done
-systemctl restart influxdb
+<b>systemctl restart influxdb</b>
 #systemctl restart grafana-server
 #systemctl restart telegraf</p>
 		<h3 id="influxdb-setup">Set Up Database and InfluxDB Users</h3>
 		<p>
-			Now that InfluxDB has been installed and started, you will need to connect to the
-			database and set up the databases and users.
+			Now that InfluxDB has been installed and started, you will need to connect to it and set
+			up the databases and users.
 		</p>
-		
+		<p>
+			Connect to InfluxDB with the <span class="code">influx</span> command. HTTPS is always
+			enabled (as per the config setup in this guide), so you will need to use the -ssl option
+			when connecting, and you will need to specify the host with the -host flag.
+		</p>
+		<p class="code">dekarrin@meiling:~$ influx -ssl -host meiling.example.com
+Connected to https://meiling.example.com:8086 version 1.4.2
+InfluxDB shell version: 1.4.2</p>
+		<p>
+			Since this is your first time connecting, you'll need to set up the admin user. Make a
+			strong password and do not lose it; it is required for access to the database.
+		</p>
+		<p class="code">> CREATE USER admin WITH PASSWORD 'agoodpassword' WITH ALL PRIVILEGES;</p>
+		<p>
+			Now disconnect from the database and reconnect as the admin user:
+		</p>
+		<p class="code">> exit
+dekarrin@meiling:~$ influx -ssl -host meiling.example.com -username admin -password agoodpassword
+Connected to https://meiling.example.com:8086 version 1.4.2
+InfluxDB shell version: 1.4.2
+></p>
+		<p>
+			Next, create the databases for metrics. This tutorial will guide you in creating three
+			databases; one for the health of the global hath network, one for the hath network
+			health of your clients, and one for the hardware/system metrics of your clients.
+		</p>
+		<p class="code">> CREATE DATABASE hath_network;
+> CREATE DATABASE hath_client_network_health;
+> CREATE DATABASE hath_client_metrics;</p>
+		<p>
+			Next, create the users and grant them permissions on the databases they need. This
+			tutorial will guide you in creating three users; one for reporting metrics from Telegraf
+			installed on clients, one for reporting metrics from Telegraf installed on the metrics
+			server, and one for Grafana to read metrics on all databases. <span class="warning">Make
+			sure to give them real passwords, and not the exact passwords shown here.</span>
+		</p>
+		<p class="code">> CREATE USER "hath_client_telegraf" WITH PASSWORD 'clientpass';
+> CREATE USER "hath_netstats" WITH PASSWORD 'netstatspass';
+> CREATE USER "grafana" WITH PASSWORD 'grafanapass';</p>
+		<p>
+			Grant the correct permissions to each user for the corresponding database(s):
+		</p>
+		<p class="code">> GRANT WRITE ON hath_network TO hath_netstats;
+> GRANT WRITE ON hath_client_network_health TO hath_netstats;
+> GRANT WRITE ON hath_client_metrics TO hath_client_telegraf;
+> GRANT READ ON hath_network TO grafana;
+> GRANT READ ON hath_client_network_health TO grafana;
+> GRANT READ ON hath_client_metrics TO grafana;</p>
+		<p>
+			The final thing to do is to set up retention policies for data, if desired. This will
+			give all data a time-to-live before it is automatically purged from the database.
+			Setting up retention policies is beyond the scope of this guide, but if you wish to set
+			them up, see the info at the <a href="https://docs.influxdata.com/influxdb/v1.4/guides/downsampling_and_retention/">InfluxData</a>
+			website.
+		</p>
+		<p>
+			At this point, all users and databases should now be set up on the InfluxDB server. Your
+			metrics server is now ready to start receiving data!
+		</p>
 		<h2 id="telegraf-client">Setting Up Telegraf on the Clients</h2>
 		<h2 id="telegraf-server">Setting Up Telegraf on the Metrics Server</h2>
 		<h3 id="install-telegraf">Install Telegraf</h3>
