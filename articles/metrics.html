@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Metrics for H@H Client :: Patchouli Documentation</title>
+	<link rel="stylesheet" type="text/css" href="../styles.css" />
+	<meta charset="UTF-8" />
+	<meta name="description" content="Setting up a metrics stack for H@H." />
+	<meta name="author" content="Rebecca C. Nelson" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--[if lt IE 9]>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+	<p class="backlink">
+		<a href="../"><img src="../patchoulismall.png" width="20px">Back to Archive</a>
+	</p>
+	<main class="article">
+		<h1>Metrics for H@H Client</h1>
+		<p class="subtitle">A tutorial for monitoring your client using Telegraf and Grafana</p>
+		<p class="subtitle">By dekarrin</p>
+		<p>
+			This tutorial is a step-by-step process for the setup of a system for monitoring the
+			Hentai@Home client using graphs and automated alerts. It uses the Grafana web
+			application to show charts of the client’s performance and hath generation, Telegraf to
+			both collect information from the host machines of the H@H clients as well as to collect
+			information on the Hath network performance from the main Hentai@Home website, and
+			InfluxDB as the metric storage backend. DigitalOcean is used to host these services on a
+			server separate from the H@H clients in order to provide constant monitoring even during
+			client downtime.
+		</p>
+		<div class="captioned-image">
+			<img src="../images/metrics/example-chart.png" width="700px" alt="Example Chart">
+			<p>An example of one of the charts that this tutorial will help to set up.<p>
+		</div>
+		<p>
+			This tutorial is split into several sections. I recommend going through each section in
+			order; it might be possible to do the sections out of order, but it could result in
+			parts of the metrics pipeline being unstable until the rest of the sections are
+			completed.
+		</p>
+		<h2>Table of Contents</h2>
+		<ul>
+			<li><a href="#requirements">Requirements</a></li>
+			<li><a href="#creating-the-server">Creating the Metrics Server</a>
+				<ul>
+					<li><a href="#create-instance">Create an Instance on Digital Ocean</a></li>
+					<li><a href="#lock-down">Lock Down Instance with Firewall/Security Group</a></li>
+					<li><a href="#dns">Create Domain Name Records</a></li>
+				</ul>
+			</li>
+			<li><a href="#basic-setup">Basic Server Setup</a>
+				<ul>
+					<li><a href="#basic-utils">Install Basic Utilities</a></li>
+					<li><a href="#create-users">Create Users and Groups</a></li>
+					<li><a href="#lets-encrypt">Obtain a TLS Certificate with Let's Encrypt</a></li>
+				</ul>
+			</li>
+			<li><a href="#influxdb">Setting up InfluxDB</a></li>
+			<li><a href="#telegraf-client">Setting up Telegraf on the Clients</a></li>
+			<li><a href="#telegraf-server">Setting up Telegraf on the Metrics Server</a>
+				<ul>
+					<li><a href="#install-telegraf">Install Telegraf</a></li>
+					<li><a href="#install-pytelegrafhttp">Install PyTelegrafHTTP</a></li>
+				</ul>
+			</li>
+			<li><a href="#grafana">Setting up Grafana</a>
+				<ul>
+					<li><a href="#grafana-install">Install Grafana</a></li>
+					<li><a href="#grafana-charts">Create Charts</a></li>
+				</ul>
+			</li>
+			<li><a href="#whats-next">Where to go from Here</a>
+				<ul>
+					<li><a href="#alerting">Alerting</a></li>
+					<li><a href="#ifttt">Using IFTTT for Phone Notifications</a></li>
+					<li><a href="#backup">Backups</a></li>
+				</ul>
+			</li>
+		</ul>
+		<h2 id="requirements">Requirements</h2>
+		<p>
+			There are a few things that you will need in order to set up the metrics stack. You are
+			of course free to substitute the requirements as you see fit, but this is the system
+			that works for me. If you do end up finding different ways to do things, please let me
+			know and I would be happy to include it in this document.
+		</p>
+		<p>Here is what you will need (all prices given are in United States Dollar):
+		<ul>
+			<li><b>At least one Hentai@Home client that is already running and is actively
+				contributing to the hath network.</b> This guide will not be very helpful if you
+				don’t already have a running client; go to
+				<a href="https://e-hentai.org/hentaiathome.php">the H@H info page</a> for info on
+				running a client. Actually setting up the client is beyond the scope of this guide;
+				please refer to the link and/or contact Tenboro on the forums for help with the
+				actual set up and administration of the client.
+			</li>
+			<li><b>At least one web-accessible server that you have full root access on, or about
+				$5/month to buy one from DigitalOcean, preferably completely separate from the
+				Hentai@Home host machine.</b> This box will be used to host the data storage backend
+				InfluxDB as well as the chart and graph front-end, Grafana. It will also be used to
+				collect metrics on your client from the Hentai@Home client info page using Telegraf.
+				If you wish to separate these functionalities into separate servers, by all means
+				please do. I recommend against putting these services on any boxes that are also
+				hosting the H@H client; again <span class="warning">this must be separate from the
+				H@H client machine, or you will not be able to see metrics or get alerts when that
+				client goes down.</span> I also do not recommend self-hosting this box at home; it’s
+				only $5/month for a micro instance from DigitalOcean and only a little bit more for
+				instances on other IaaS, and that gets you the assurance that your monitoring is
+				always up without you having to deal with the headache of infrastructure management
+				and maintenance.
+			</li>
+			<li><b>A domain name, or about $10 to $30 per year to buy one (price depends on the
+				TLD/ending).</b> It will make your life far easier, especially when setting up
+				proper HTTPS certificates for your Grafana application. My typical strategy is to
+				buy a single domain name and use subdomains to point to different services on
+				different servers. If you don’t yet have a domain name, you can buy one from
+				<a href="https://www.namecheap.com/">Namecheap</a>, and usually the first year is
+				available at a much-reduced rate.
+			</li>
+		</ul>
+		<h2 id="creating-the-server">Creating the Metrics Server</h2>
+		<p>
+			You will need a place for Grafana, InfluxDB, and the hath network metrics collection
+			daemon to live. I recommend that this be separate from any box that is hosting a H@H
+			client, because if it isn’t and that box goes down, you will get zero notifications that
+			your client went down. For the same reason, it’s a good idea to have it hosted on a
+			different network than the one that your H@H clients are on.
+		</p>
+		<p>
+			You will need a server that is connected to the internet and that you have full root
+			access on. Additionally, you will probably want a server with reliable uptime. You do
+			not need a very beefy machine; I’ve found that a box with 512MB of RAM and 20GB of disk
+			space is perfectly sufficient for my current needs.
+		</p>
+		<p>
+			The quick and easy ways to get a server with good uptime that you don’t have to worry
+			about maintaining yourself are to get an instance on an Infrastructure-as-a-Service
+			system or to get a VPS. VPSs tend to be a little on the slower side at smaller scale,
+			do not often offer easy scaling options (not that this is a concern here), but most
+			importantly do not usually give you full root access to the machine; for those reasons,
+			I recommend getting a VM instance.
+		</p>
+		
+
+	</main>
+	<p class="backlink">
+		<a href="../"><img src="../patchoulismall.png" width="20px">Back to Archive</a>
+	</p>
+	<footer>
+		<p><em>Last updated on
+			<time datetime="2018-02-17T00:57:12Z">February 17th, 2018</time>.</em>
+		</p>
+		<p>
+			"<a href="https://fantastiic.deviantart.com/art/Chibi-Patchouli-Knownledge-Touhou-305044472">Chibi Patchouli Knownledge (Touhou)</a>"
+			by <a href="https://fantastiic.deviantart.com/">Fantastiic</a>, used under
+			<a href="https://creativecommons.org/licenses/by-nc/3.0/">CC BY-NC 3.0</a> / cropped from
+			original.
+		</p>
+		<p>
+			This website's content and its code (unless otherwise specified) is copyright
+			Rebecca Nelson.</p>
+		<p>
+			<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />
+			The content of this site is licensed under a
+			<a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+		</p>
+		<p>
+			The code that makes up this site is licensed for use under the GPLv3; for
+			the full license, click <a href="./LICENSE.txt">here</a>.
+		</p>
+	</footer>
+</body>
+</html>

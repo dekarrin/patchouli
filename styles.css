@@ -26,6 +26,38 @@ a:hover, a:focus, a:visited:hover, a:visited:focus {
 	text-decoration: underline;
 }
 
+.article {
+	font-size: 11pt;
+}
+
+.article h1 {
+	font-family: "Arial", sans-serif;
+	font-size: 26pt;
+	text-align: center;
+	font-style: normal;
+	font-weight: normal;
+}
+
+.article h2 {
+	font-family: "Arial", sans-serif;
+	font-size: 20pt;
+	text-align: left;
+	font-style: normal;
+	font-weight: normal;
+}
+
+.article .subtitle {
+	color: #666666;
+	font-family: "Arial", sans-serif;
+	font-size: 15pt;
+	text-align: center;
+	margin-top: 1px;
+	margin-bottom: 1px;
+	font-style: normal;
+	font-weight: normal;
+}
+
+
 h1, h2, h3 {
 	line-height: 1.2;
 	clear: both;
@@ -55,6 +87,11 @@ main {
 	display: block;
 }
 
+.warning {
+	color: red;
+	font-weight: bold;
+}
+
 .float-left {
 	float: left;
 	margin-right: 10px;
@@ -67,4 +104,31 @@ main {
 
 .float-clear {
 	clear: both;
+}
+
+.backlink img {
+	margin-bottom: 0;
+	margin-right: 5px;
+	vertical-align: -5px;
+}
+
+.backlink {
+	font-size: 10pt;
+	font-style: italic;
+}
+
+.captioned-image {
+	text-align: center;
+}
+
+.captioned-image img {
+	display: block;
+	margin: 0 auto;
+}
+
+.captioned-image p {
+	margin: 2px 0 0;
+	font-size: 9pt;
+	font-style: italic;
+	color: #555555;
 }
