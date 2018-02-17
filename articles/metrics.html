@@ -234,6 +234,113 @@
 			firewall, and we will set up a domain name for the host and put it on a subdomain so we
 			can access it via name instead of via IP address.
 		</p>
+		<h3 id="lock-down">Lock Down Instance with Firewall/Security Group</h3>
+		<p>
+			On DigitalOcean, new droplets are open to the internet on all ports. This is not the
+			greatest idea; we will want to close all ports that are not necessary for operation. To
+			do this, we will create a “Cloud Firewall” (also known as a “Security Group” on some
+			IaaS platforms).
+		</p>
+		<p>
+			Go to the “Networking” tab on DigitalOcean, and select the “Firewalls” sub-tab. Hit the
+			“Create Firewall” button and call it something meaningful; something like
+			“Influx-Grafana-HathTele” will work just fine.
+		</p>
+		<p>
+			For Inbound Rules, first make sure that there is a rule for SSH over TCP for All IPv4
+			and All IPv6. If you do not, you will not be able to log in to your instance over SSH.
+		</p>
+		<p>
+			Add an inbound rule for HTTP and a rule for HTTPS; the fields should auto-populate, but
+			make sure both rules contain the sources “All IPv4” and “All IPv6”. This will allow
+			Grafana to be accessed over the web.
+		</p>
+		<p>
+			Also add a “Custom”-type inbound rule for TCP traffic under port 8086, again making sure
+			it contains the sources “All IPv4” and “All IPv6”. This will make InfluxDB accessible
+			over the web.
+		</p>
+		<p>
+			The default outbound rules should be fine. Make sure that ICMP, All TCP, and All UDP
+			exist as rules, and make sure they each have “All IPv4” and “All IPv6” in their
+			“Destinations” fields.
+		</p>
+		<p>
+			Under “Apply to Droplets”, start typing the hostname of your droplet and select it from
+			the list when it pops up.
+		</p>
+		<p>
+			Finally, hit the “Create Firewall” button to save the firewall and apply it to your
+			instance. Now, traffic on other ports will not be allowed through, and your box is
+			slightly more secure. I mean don’t go around bragging about it, this is super basic
+			security. But at least it won’t ever listen to traffic on other ports if someone happens
+			to install malicious server software on the box.
+		</p>
+		<p>
+			Next, we’ll configure domain name records so you can access your box with a nice
+			internet address instead of a bunch of mean-looking numbers.
+		</p>
+		<h3 id="#dns">Create Domain Name Records</h3>
+		<p>
+			This section has information on moving a domain name over to DigitalOcean for use with
+			your droplets and then using DigitalOcean to assign a subdomain to your droplet. If you
+			don’t yet own a domain name, head over to Namecheap or wherever you want to pick one up.
+			They run from about $10 to $30 per year depending on the ending; .com’s are about $11
+			per year. If you will not be setting up a domain name or you already have one set up,
+			feel free to skip down to <a href="#basic-setup">Basic Server Setup</a> to start
+			administrating your server immediately.
+		</p>
+		<p>
+			Once you have a domain name purchased, you will need to transfer it to DigitalOcean.
+			They already have a <a href="https://www.digitalocean.com/community/tutorials/how-to-point-to-digitalocean-nameservers-from-common-domain-registrars">great guide</a>
+			written up for how to do this, so head over there and complete the steps there.
+		</p>
+		<p>
+			Once the nameservers have been properly updated, head over to the Networking tab of the
+			DigitalOcean control panel. You should see your domain name in the list there; if you
+			don’t, go ahead and add the raw (without anything before it, including www) domain name.
+			For example, if I were to own the domain “example.com”. I would enter that exactly
+			(without the quotes). Don’t actually use example.com, use whatever domain name you own.
+		</p>
+		<p>
+			Next, we will add some DNS records to point at your server. Click on your domain in the
+			list and you should see the “Create New Record” interface. Go to the “A” tab to create a
+			new A-record; this will point the domain name to your droplet’s IPv4 address.
+		</p>
+		<p>
+			We’ll be using a subdomain, which is the part in the address that comes before the
+			domain we purchased. For example, in “www.example.com”, “example.com” would be the
+			domain name and “www” would be the subdomain. Enter something memorable; it usually
+			makes sense to just call it the same as whatever hostname you assigned to the droplet
+			during creation. Enter the subdomain in the “Hostname” field (for the instance I created
+			during this guide, I would use “meiling” as the subdomain).
+		</p>
+		<p>
+			In the “Will Direct To” box, select the droplet that you created. In the “TTL” field,
+			put down a number that makes sense. This number is how often the DNS network will check
+			for changes in the record, and will affect how long it takes to update should you ever
+			change what the record points to. 3600 seconds is one hour and is just fine.
+		</p>
+		<p>
+			Finally, hit the “Create Record” button and you are done! If you enabled IPv6 for your
+			droplet, you should also create an AAAA-record going to the “AAAA” tab and repeating the
+			process with the same information.
+		</p>
+		<p>
+			That’s it! Your instance is now accessible by a human-readable internet address rather
+			than a spoopy scary-skeletons set of numbers. But, note that you won’t get anything yet
+			if you try to go there in a web browser; we still need to set up the server.
+		</p>
+		<p>
+			Grab your root password from your email, pull up a terminal (or PuTTY if you are on
+			Windows), and SSH to root@your-internet-address-that-you-just-set-up, and you’ll be in
+			business! If all has gone well, you’ll be presented with a terminal prompt on your new
+			box, and will be required to immediately change the root password. Please do so, but
+			note that this will not be your main user if you follow the rest of the guide.
+		</p>
+		<p>
+			Now it’s time to move on to setting up the server.
+		</p>
 	</main>
 	<p class="backlink">
 		<a href="../"><img src="../patchoulismall.png" width="20px">Back to Archive</a>
