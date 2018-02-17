@@ -141,8 +141,99 @@
 			importantly do not usually give you full root access to the machine; for those reasons,
 			I recommend getting a VM instance.
 		</p>
-		
-
+		<h3 id="create-instance">Create an Instance on Digital Ocean</h3>
+		<p>
+			This section of the guide walks through the steps required to set up an instance on
+			DigitalOcean to use as the metrics server. If you already have a machine that meets the
+			requirements for a metrics server, feel free to skip this step and continue with
+			<a href="#dns">Create Domain Name Records</a>.
+		</p>
+		<p>
+			DigitalOcean is an IaaS platform that offers excellent prices for small-scale VMs. They
+			call their instances “droplets”, and they offer a variety of different types depending
+			on what your needs are. For our purposes, the smallest standard droplet they offer is
+			perfectly sufficient, and costs only $5 per month at the time of this writing.
+		</p>
+		<p>
+			First, head over to <a href="https://www.digitalocean.com/">DigitalOcean</a> and create an account. You will need to enter credit
+			card information so that you can be billed for you instance, but generally with IaaS
+			platforms, you will not be charged until the billing period has ended.
+		</p>
+		<p>
+			The way we will be setting up the server infrastructure, it is extremely unlikely that
+			you will be charged anything above $5 per month, but as with other IaaS platforms, you
+			are billed based on usage, so it might be a good to set up a “Billing Alert” on the
+			off-chance that something is inadvertently changed which causes you to be billed more
+			than you would like. I set my alert to ping me if my bill ever exceeds $10 to be on the
+			safe side. To configure this, head over to your account settings, go under “Billing”,
+			and scroll down to “Billing Alerts” to set a threshold for you to be warned at. Don’t
+			forget to save!
+		</p>
+		<p>
+			Okay cool, now let’s actually create an instance. Hit the green Create button at the top
+			right corner of the page and select “Droplets” (or just go to
+			<a href="https://cloud.digitalocean.com/droplets/new">https://cloud.digitalocean.com/droplets/new</a>).
+		</p>
+		<p>
+			You will need to select an operating system. The rest of this guide assumes that you are
+			using Ubuntu, but you can select a different distro if you are more familiar with it and
+			prefer it (though you will need to know how to translate the rest of this guide into the
+			dialect of that distro). Just make sure to select a Linux distribution (note that BSD is
+			not the same as Linux!), or you are on your own for the rest of the guide.
+		</p>
+		<p>
+			Next, choose a droplet size. The smallest profile under “Standard Droplets” will work
+			just fine; at the time of this writing that is a 1GB RAM/1 CPU/25GB Disk Space/1 TB
+			Transfer image that costs $5 per month. If you really would prefer to have a beefier
+			box, go for it, but it will cost you more.
+		</p>
+		<p>
+			Block Storage / Volumes are only necessary if you find you need more space on your
+			droplet, but will cost you more. You really don’t need it; 25 GB is fine to start with
+			and you can always add volumes to your instance later.
+		</p>
+		<p>
+			For the data center, pick whatever you want. At the the scale that we are dealing with
+			here it really doesn’t matter. If I had to make a recommendation, I’d say pick a
+			location that is generally closest to you for general use, as it might be miniscule
+			fractions of a second faster. All of the data centers are just fine, though note that
+			some features (such as block storage) are limited to particular data centers.
+		</p>
+		<p>
+			For additional options, check whatever makes sense to you. I have my box set up with
+			IPv6 and Monitoring. It’s also be a good idea to add weekly Backups. This will cause
+			your bill to be a little higher (20% higher as of the time of this writing), but it is
+			well worth it to ensure your data is not lost in the event of catastrophic system
+			failure.
+		</p>
+		<p>
+			Setting up an SSH key during droplet set up is not a requirement, but it will make it so
+			that the initial root password does not have to be sent to you over email. If you aren’t
+			already familiar with using SSH keys to authenticate to remote servers, don’t worry
+			about it, though I recommend you get familiar with them at some point as they will make
+			your dev-ops life easier.
+		</p>
+		<p>
+			Finally, choose a hostname for your droplet. This is a name for your droplet, and if you
+			want, you can stay with the default name which is based on the droplet profile, but I
+			find it makes it much easier to give it a more meaningful name. Many admins give the
+			hosts names based on the application running on the server; I give my hosts names based
+			on waifus. For my server infrastructure, I use Touhou characters such as “sakuya”,
+			“flandre”, “patchouli”, etc. No matter what, in order to make your life easier, make
+			sure to use only lower-case characters and dashes; this will also make it so your domain
+			names can be the same as your host names. For the purposes of this guide, I’m going to
+			call mine “meiling”.
+		</p>
+		<p>
+			Finally, hit “Create”, give the box a few moments to spin up, and you are done! You
+			should now have an internet-accessible droplet with a static IPv4 address (and a static
+			IPv6 address if you had selected it).
+		</p>
+		<p>
+			Before we log in for the first time, we’ll secure the droplet by setting up a cloud
+			firewall, and we will set up a domain name for the host and put it on a subdomain so we
+			can access it via name instead of via IP address.
+		</p>
 	</main>
 	<p class="backlink">
 		<a href="../"><img src="../patchoulismall.png" width="20px">Back to Archive</a>
