@@ -808,7 +808,7 @@ InfluxDB shell version: 1.4.2
 			and follow the instructions specific to the system that the hath client is installed on.
 		</p>
 		<p>
-			Then, take the <a href="../supplementary/telegraf-hath.txt">sample configuration file</a>
+			Then, take the <a href="../sidedocs/metrics/telegraf-hath.txt">sample configuration file</a>
 			and copy its contents to the telegraf configuration file. On Debian-like Linux distros,
 			this will be at /etc/telegraf/telegraf.conf.
 		</p>
@@ -867,7 +867,7 @@ root@meiling:/home/dekarrin# exit</p>
 		</p>
 		<p class="code">dekarrin@meiling:~$ sudo apt-get install telegraf</p>
 		<p>
-			Next, take the contents of the <a href="../supplementary/telegraf-server.txt">sample server telegraf config file</a>
+			Next, take the contents of the <a href="../sidedocs/metrics/telegraf-server.txt">sample server telegraf config file</a>
 			and copy the contents to /etc/telegraf/telegraf.conf.
 		</p>
 		<p>
@@ -925,7 +925,7 @@ To start, do `systemctl start pytelegrafhttp`</p>
 			Now you will need to edit the config file for PyTelegrafHTTP. An explanation of the
 			config file format is far beyond the scope of this guide; it is a normal python module,
 			but the variables themselves are moderately complex. Instead, copy the contents of the
-			<a href="../supplementary/pytelegrafhttp-config.py">example PyTelegrafHTTP config</a>
+			<a href="../sidedocs/metrics/pytelegrafhttp-config.py">example PyTelegrafHTTP config</a>
 			into the real config file at <span class="code">/etc/pytelegrafhttp/config.py</span>.
 		</p>
 		<p class="code">dekarrin@meiling:~$ sudo nano /etc/pytelegrafhttp/config.py</p>
