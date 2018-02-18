@@ -104,25 +104,11 @@
 			<li><b>At least one web-accessible server that you have full root access on, or about
 				$5/month to buy one from DigitalOcean, preferably completely separate from the
 				Hentai@Home host machine.</b> This box will be used to host the data storage backend
-				InfluxDB as well as the chart and graph front-end, Grafana. It will also be used to
-				collect metrics on your client from the Hentai@Home client info page using Telegraf.
-				If you wish to separate these functionalities into separate servers, by all means
-				please do. I recommend against putting these services on any boxes that are also
-				hosting the H@H client; again <span class="warning">this must be separate from the
-				H@H client machine, or you will not be able to see metrics or get alerts when that
-				client goes down.</span> I also do not recommend self-hosting this box at home; it’s
-				only $5/month for a micro instance from DigitalOcean and only a little bit more for
-				instances on other IaaS, and that gets you the assurance that your monitoring is
-				always up without you having to deal with the headache of infrastructure management
-				and maintenance.
+				InfluxDB as well as the chart and graph front-end, Grafana.
 			</li>
 			<li><b>A domain name, or about $10 to $30 per year to buy one (price depends on the
 				TLD/ending).</b> It will make your life far easier, especially when setting up
-				proper HTTPS certificates for your Grafana application. My typical strategy is to
-				buy a single domain name and use subdomains to point to different services on
-				different servers. If you don’t yet have a domain name, you can buy one from
-				<a href="https://www.namecheap.com/">Namecheap</a>, and usually the first year is
-				available at a much-reduced rate.
+				proper HTTPS certificates for your Grafana application.
 			</li>
 		</ul>
 		<h2 id="creating-the-server">Creating the Metrics Server</h2>
