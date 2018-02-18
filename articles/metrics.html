@@ -1187,6 +1187,49 @@ root@meiling:/home/dekarrin# exit</p>
 			dashboards.
 		</p>
 		<h3 id="grafana-dashboards">Create Dashboards</h3>
+		<p>
+			Your metrics stack is now ready to start building dashboards with Grafana. To make it
+			easier, I have made some pre-built dashboards available that you can use to get started
+			right away.
+		</p>
+		<p>
+			To import the dashboards, go to the menu and select "Import" under "Dashboards".
+		</p>
+		<div class="captioned-image">
+			<img src="../images/metrics/grafana-import.png" width="700px" alt="Import menu">
+			<p>Location of "Import" in Grafana menu.<p>
+		</div>
+		<p>
+			Copy the contents of one of the dashboard files listed above into the "Paste JSON" field
+			of the import dialog, then hit the "Load" button. Press the "Import" button to complete
+			the process.
+		</p>
+		<div class="captioned-image">
+			<img src="../images/metrics/grafana-imported-dashboard.png" width="700px" alt="Imported dashboard">
+			<p>Example of imported dashboard.<p>
+		</div>
+		<p>
+			You should see some data in the dashboard once it has been loaded. If you do not see any
+			datapoints, something has gone wrong during the process, and you will need to fix your
+			setup.
+		</p>
+		<p>You may notice that the graphs are only partially filled with data. This is simply
+			because not enough data has been collected for the time period that the dashboard is
+			displaying in order to fill it. Don't worry, it will fill up eventually.
+		</p>
+		<p>
+			And, that's it! Repeat for any/all dashboards given, and you'll have an initial set up
+			of dashboards. If you find any dashboard particularly useful, you can hit the star on
+			toolbar to "star" the dashboard, which puts it in the starred dashboard lists on the
+			home page.
+		</p>
+		<p>
+			Note for multi-client setup: If you are monitoring multiple hath clients, you will need
+			to edit some of the prefab panels to work properly. All of the singlestat "Down Clients"
+			panels are optimized for only one client; to make them work with multiple clients, edit
+			the panel and change the 'math' field in the SELECT query to be <span class="literal">math(*-1
+			+ total_clients)</span>, replacing total_clients with the number of clients you have.
+		</p>
 		<h2 id="whats-next">Where To Go From Here</h2>
 		<h3 id="alerting">Alerting</h3>
 		<h3 id="ifttt">Using IFTTT for Phone Notifications</h3>
