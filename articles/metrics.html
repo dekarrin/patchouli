@@ -143,8 +143,9 @@
 		<p>
 			DigitalOcean is an IaaS platform that offers excellent prices for small-scale VMs. They
 			call their instances "droplets", and they offer a variety of different types depending
-			on what your needs are. For our purposes, the smallest standard droplet they offer is
-			perfectly sufficient, and costs only $5 per month at the time of this writing.
+			on what your needs are. For the purposes of this guide, the smallest standard droplet
+			they offer is perfectly sufficient. It costs only $5 per month at the time of this
+			writing.
 		</p>
 		<p>
 			First, head over to <a href="https://www.digitalocean.com/">DigitalOcean</a> and create an account. You will need to enter credit
@@ -212,10 +213,11 @@
 			find it makes it much easier to give it a more meaningful name. Many admins give the
 			hosts names based on the application running on the server; I give my hosts names based
 			on anime characters. For my server infrastructure, I use Touhou characters such as
-			"flandre", or "patchouli". No matter what, in order to make your life easier, make sure
-			to use only lower-case characters and dashes; this will also make it so your domain
-			names can be the same as your hostnames. For the purposes of this guide, I'm going to
-			call mine "meiling".
+			<span class="literal">flandre</span> or <span class="literal">patchouli</span>. No
+			matter what, in order to make your life easier, make sure to use only lower-case
+			characters and dashes; this will also make it so your domain names can be the same as
+			your hostnames. For the purposes of this tutorial, this guide will use the hostname
+			<span class="literal">meiling</span>.
 		</p>
 		<p>
 			Finally, hit "Create", give the box a few moments to spin up, and you are done! You
@@ -241,7 +243,7 @@
 		<p>
 			Go to the "Networking" tab on DigitalOcean, and select the "Firewalls" sub-tab. Hit the
 			"Create Firewall" button and call it something meaningful; something like
-			"Influx-Grafana-HathTele" will work just fine.
+			<span class="literal">Influx-Grafana-HathTele</span> will work just fine.
 		</p>
 		<p>
 			For Inbound Rules, first make sure that there is a rule for SSH over TCP for All IPv4
@@ -250,7 +252,7 @@
 		<p>
 			Add an inbound rule for HTTP and a rule for HTTPS; the fields should auto-populate, but
 			make sure both rules contain the sources "All IPv4" and "All IPv6". This will allow
-			Grafana to be accessed over the web, as well as enable Certbot for automatic TLS
+			Grafana to be accessed over the web, and it will allow Certbot to do automatic TLS
 			certificate renewal.
 		</p>
 		<p>
@@ -270,9 +272,9 @@
 		<p>
 			Finally, hit the "Create Firewall" button to save the firewall and apply it to your
 			instance. Now, traffic on other ports will not be allowed through, and your box is
-			slightly more secure. I mean don't go around bragging about it, this is super basic
-			security. But at least it won't ever listen to traffic on other ports if someone happens
-			to install malicious server software on the box.
+			slightly more secure. I mean, I wouldn't go around bragging about it, this is super
+			basic security. But at least it won't ever listen to traffic on other ports if someone
+			happens to install malicious server software on the box.
 		</p>
 		<p>
 			Next, you'll configure domain name records so you can access your box with a nice
@@ -282,10 +284,10 @@
 		<p>
 			This section has information on moving a domain name over to DigitalOcean for use with
 			your droplets and then using DigitalOcean to assign a subdomain to your droplet. If you
-			don't yet own a domain name, head over to Namecheap or wherever you want to pick one up.
-			They run from about $10 to $30 per year depending on the ending; .com's are about $11
-			per year. If you will not be setting up a domain name or you already have one set up,
-			feel free to skip down to <a href="#basic-setup">Basic Server Setup</a> to start
+			don't yet own a domain name, head over to Namecheap or some other registrar to pick one
+			up. They run from about $10 to $30 per year depending on the ending; .com's are about
+			$11 per year. If you will not be setting up a domain name or you already have one set
+			up, feel free to skip down to <a href="#basic-setup">Basic Server Setup</a> to start
 			administrating your server immediately.
 		</p>
 		<p>
@@ -297,8 +299,9 @@
 			Once the nameservers have been properly updated, head over to the Networking tab of the
 			DigitalOcean control panel. You should see your domain name in the list there; if you
 			don't, go ahead and add the raw (without anything before it, including www) domain name.
-			For example, if I were to own the domain "example.com". I would enter that exactly
-			(without the quotes). Don't actually use example.com, use whatever domain name you own.
+			For example, if I were to own the domain <span class="literal">example.com</span>. I
+			would enter that exactly. Don't actually use example.com, use whatever domain name you
+			own.
 		</p>
 		<p>
 			Next, you will add some DNS records to point at your server. Click on your domain in the
@@ -307,17 +310,20 @@
 		</p>
 		<p>
 			You'll be using a subdomain, which is the part in the address that comes before the
-			domain you purchased. For example, in "www.example.com", "example.com" would be the
-			domain name and "www" would be the subdomain. Enter something memorable; it usually
-			makes sense to just call it the same as whatever hostname you assigned to the droplet
-			during creation. Enter the subdomain in the "Hostname" field (for the instance I created
-			during this guide, I would use "meiling" as the subdomain).
+			domain you purchased. For example, in the address
+			<span class="literal">www.example.com</span>, <span class="literal">example.com</span>
+			would be the domain name and <span class="literal">www</span> would be the subdomain.
+			Enter something memorable; it usually makes sense to just call it the same as whatever
+			hostname you assigned to the droplet during creation. Enter the subdomain in the
+			"Hostname" field (for the instance I created during this guide, I would use
+			<span class="literal">meiling</span> as the subdomain).
 		</p>
 		<p>
 			In the "Will Direct To" box, select the droplet that you created. In the "TTL" field,
 			put down a number that makes sense. This number is how often the DNS network will check
 			for changes in the record, and will affect how long it takes to update should you ever
-			change what the record points to. 3600 seconds is one hour and is just fine.
+			change what the record points to. <span class="literal">3600</span> seconds is one hour,
+			and is perfectly sufficient.
 		</p>
 		<p>
 			Finally, hit the "Create Record" button and you are done! If you enabled IPv6 for your
@@ -343,11 +349,11 @@
 		<p>
 			So, now you've got a box somewhere on the internet. Awesome! The next step is to log in
 			to it and start configuring everything. Before you jump to the metrics stack, you'll
-			need to do some basic server setup first.
+			need to do some basic server setup.
 		</p>
 		<p>
 			If you've been following the guide so far, you won't yet have any users set up, so log
-			into your instance as the user ‘root' (root@your-box-address).
+			into your instance as the user 'root' (root@your-box-address).
 		</p>
 		<h3 id="basic-utils">Install Basic Utilities</h3>
 		<p>
@@ -359,11 +365,11 @@
 		<p>
 			Install updates to the package lists:
 		</p>
-		<p class="code">root@meiling:~# apt-get update</p>
+		<p class="code"><span class="con-red-fg">root@meiling:~#</span> apt-get update</p>
 		<p>
 			Now install any available updates:
 		</p>
-		<p class="code">root@meiling:~# apt-get upgrade</p>
+		<p class="code"><span class="con-red-fg">root@meiling:~#</span> apt-get upgrade</p>
 		<p>
 			Type Y if required to continue with the install.
 		</p>
@@ -371,32 +377,35 @@
 			If there were messages during the update about packages that are no longer required, you
 			can remove them after the update completes:
 		</p>
-		<p class="code">root@meiling:~# apt-get autoremove</p>
+		<p class="code"><span class="con-red-fg">root@meiling:~#</span> apt-get autoremove</p>
 		<p>
 			Next, you'll install some programs that will make life easier on this system.
 		</p>
 		<p>
-			If you do not have 'sudo' on your system, install it now. You can test whether you have
-			sudo by trying to use it. If you don't have it, you will see the following:
+			If you do not have <span class="code">sudo</span> on your system, install it now. You
+			can test whether you have sudo by trying to use it. If you don't have it, you will see
+			the following:
 		</p>
 		<p class="code">sudo: command not found</p>
 		<p>
 			If you don't have it, go ahead and install it now.
 		</p>
-		<p class="code">root@meiling:~# apt-get install sudo</p>
+		<p class="code"><span class="con-red-fg">root@meiling:~#</span> apt-get install sudo</p>
 		<p>
-			Next, you'll want a text editor. For simplicity's sake, this guide will use the ‘nano'
-			editor, but if you prefer, you can install vim, emacs, or whatever you want.
+			Next, you'll want a text editor. For simplicity's sake, this guide will use the
+			<span class="code">nano</span> editor, but if you prefer, you can install
+			<span class="code">vim</span>, <span class="code">emacs</span>, or any other editor.
 		</p>
-		<p class="code">root@meiling:~# apt-get install nano</p>
+		<p class="code"><span class="con-red-fg">root@meiling:~#</span> apt-get install nano</p>
 		<p>
 			In all likelihood, it will already be installed.
 		</p>
 		<p>
 			That's it for initial software and set up! If you would like, I'd also recommend
-			installing `screen` or `tmux` so you can keep your session open even if you lose your
-			connection while you are SSH'd into your box, but it is by no means necessary. Next,
-			you'll move on to creating a user for yourself.
+			installing <span class="code">screen</span> or <span class="code">tmux</span> so you can
+			keep your session open even if you lose your connection while you are SSH'd into your
+			box, but it is by no means necessary. Next, you'll move on to creating a user for
+			yourself.
 		</p>
 		<h3 id="users-and-groups">Create Users and Groups</h3>
 		<p>
@@ -404,18 +413,20 @@
 			good idea, because the root user is unrestricted and if it were compromised, the
 			attacker would have full system access. You really only need to be logged in as root in
 			special circumstances; for general use, you'll want to create a new user for yourself on
-			your box that can only perform restricted, ‘regular' actions. You'll also set it up so
-			the user can elevate its permissions temporarily as needed with the ‘sudo' command.
+			your box that can only perform restricted, 'regular' actions. You'll also set it up so
+			the user can elevate its permissions temporarily as needed with the
+			<span class="code">sudo</span> command.
 		</p>
 		<p>
 			First, create the new user for yourself. For the username, pick something that is easy
-			to remember. It doesn't have to be secret; for me personally, I just use ‘dekarrin'.
-			Another common method of creating usernames is just your initials; for me, this would be
-			‘rcn', for Richard Stallman, it would be ‘rms'. No matter what, unless you want your
-			life to be difficult, make sure it's all lowercase and has no punctuation, and create
-			the user.
+			to remember. It doesn't have to be secret; for me personally, I just use
+			<span class="literal">dekarrin</span>. Another common method of creating usernames is
+			just your initials; for me, this would be <span class="literal">rcn</span>, for Richard
+			Stallman, it would be <span class="literal">rms</span>. No matter what, unless you want
+			your life to be difficult, make sure it's all lowercase and has no punctuation. Go ahead
+			and create the user:
 		</p>
-		<p class="code">root@meiling:~# adduser dekarrin</p>
+		<p class="code"><span class="con-red-fg">root@meiling:~#</span> adduser dekarrin</p>
 		<p>
 			You will prompted to set a password for the new user. <span class="warning">SET IT TO
 			SOMETHING OTHER THAN THE ROOT PASSWORD.</span> If you don't, setting up the additional
@@ -426,73 +437,82 @@
 			as you wish or just leave fields blank and hit enter.
 		</p>
 		<p>
-			Once you are done, confirm that the new user exists by running the `id` command. You
-			should see something along the lines of the following:
+			Once you are done, confirm that the new user exists by running the
+			<span class="code">id</span> command. You should see something along the lines of the
+			following:
 		</p>
-		<p class="code">root@meiling:~# id dekarrin
+		<p class="code"><span class="con-red-fg">root@meiling:~#</span> id dekarrin
 uid=1000(dekarrin) gid=1000(dekarrin) groups=1000(dekarrin)</p>
 		<p>
-			If you see <span class="code">id: ‘dekarrin': no such user</span>, then the user has not
+			If you see <span class="code">id: 'dekarrin': no such user</span>, then the user has not
 			been set up properly, and you'll need to try again.
 		</p>
 		<p>
-			Next, add your user to the supplementary group ‘sudo' to allow it to run the sudo
-			command. The sudo command is used for performing privileged action as an unprivileged
-			user; it is very necessary unless you want to be switching to the root user every time
-			you need to do system config.
+			Next, add your user to the supplementary group <span class="literal">sudo</span> to
+			allow it to run the <span class="code">sudo</span> command. The
+			<span class="code">sudo</span> command is used for performing privileged action as an
+			unprivileged user; it is very necessary unless you want to be switching to the root user
+			every time you need to do system config.
 		</p>
-		<p class="code">root@meiling:~# usermod -a -G sudo dekarrin</p>
+		<p class="code"><span class="con-red-fg">root@meiling:~#</span> usermod -a -G sudo dekarrin</p>
 		<p>
-			Confirm that the change worked by running `id` and making sure that sudo appears in the
-			groups that the user is a member of.
+			Confirm that the change worked by running <span class="code">id</span> and making sure
+			that <span class="literal">sudo</span> appears in the groups that the user is a member
+			of.
 		</p>
-		<p class="code">root@meiling:~# id dekarrin
+		<p class="code"><span class="con-red-fg">root@meiling:~#</span> id dekarrin
 uid=1000(dekarrin) gid=1000(dekarrin) groups=1000(dekarrin),27(sudo)</p>
 		<p>
-			Now, you need to make sure that the ‘sudo' group is authorized to execute sudo. This
-			will be in the ‘sudoers' configuration file. The exact location may vary by distro, but
-			that file should not be modified directly anyways. Instead, you will use the ‘visudo'
-			command, which will allow us to edit the config with nano, and once you are done, it
-			will make sure that the edited contents are valid before using it.
+			Now, you need to make sure that the <span class="literal">sudo</span> group is
+			authorized to execute <span class="code">sudo</span>. This will be in the
+			<span class="literal">sudoers</span> configuration file. The exact location may vary by
+			distro, but that file should not be modified directly anyways. Instead, you will use the
+			<span class="code">visudo</span> command, which will allow us to edit the config with
+			nano, and once you are done, it will make sure that the edited contents are valid before
+			using it.
 		</p>
-		<p class="code">root@meiling:~# visudo</p>
+		<p class="code"><span class="con-red-fg">root@meiling:~#</span> visudo</p>
 		<p>
 			Scroll through the file using the arrow keys, and make sure that the line
-			<span class="code">%sudo   ALL=(ALL:ALL) ALL</span> exists somewhere in the file.
+			<span class="literal">%sudo   ALL=(ALL:ALL) ALL</span> exists somewhere in the file.
 		</p>
 		<p>
-			If it exists, but has a hash character in front of it (‘#'), remove the hash character.
-			If the line does not exist, scroll to the bottom of the file and add it.
+			If it exists, but has a hash character in front of it (<span class="literal">#</span>),
+			remove the hash character. If the line does not exist, scroll to the bottom of the file
+			and add it.
 		</p>
 		<p>
-			When done, use the keyboard command given on the bottom of the screen to ‘Write-out'
-			(save) the file. The ‘^' character in the shortcuts refers to the ‘Control' key. The
-			command for writing out in nano is ^O (Control-O). Hit it and you will then be prompted
-			to give a name for the file. Leave it as the default and hit enter, then do ^X to exit
+			When done, use the keyboard command given on the bottom of the screen to 'Write-out'
+			(save) the file. The <span class="literal">^</span> character in the shortcuts refers to
+			the 'Control' key. The command for writing out in nano is <span class="code">^O</span>
+			(Control-O). Hit it and you will then be prompted to give a name for the file. Leave it
+			as the default and hit enter, then do <span class="code">^X</span> to exit
 			from nano.
 		</p>
 		<p>
-			Now, your new user is set up and can use sudo. Log out of the instance with ‘exit', and
-			log back in as your new user ("yournewuser@yourserver").
+			Now, your new user is set up and can use sudo. Log out of the instance with
+			<span class="code">exit</span>, and log back in as your new user
+			("yournewuser@yourserver").
 		</p>
-		<p class="code">root@meiling:~# exit
+		<p class="code"><span class="con-red-fg">root@meiling:~#</span> exit
 logout
 Connection to meiling.example.com closed.
-[dekarrin@kousakakirino 09:27:43 ~]$ ssh dekarrin@meiling.example.com
+<span class="con-green-fg">[dekarrin@kousakakirino 09:27:43 ~]$</span> ssh dekarrin@meiling.example.com
 dekarrin@meiling.example.com's password:
 …
-dekarrin@meiling:~$</p>
+<span class="con-green-fg">dekarrin@meiling:~$</span></p>
 		<p>
-			Double-check that sudo is working properly with a test command:
+			Double-check that <span class="code">sudo</span> is working properly with a test command:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo echo test
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo echo test
 [sudo] password for dekarrin:
 test
-dekarrin@meiling:~$</p
+<span class="con-green-fg">dekarrin@meiling:~$</span></p
 		<p>
-			Depending on the distro, it's possible that the first time you use sudo, you will be
-			presented with a prompt that asks you to accept the responsibility of being able to use
-			the sudo command. That's fine, accept the prompt.
+			Depending on the distro, it's possible that the first time you use
+			<span class="code">sudo</span>, you will be presented with a prompt that asks you to
+			accept the responsibility of being able to use the sudo command. That's fine, accept the
+			prompt.
 		</p>
 		<p>
 			From now on, it is a good idea to never log in as the root user except in emergencies.
@@ -504,7 +524,7 @@ dekarrin@meiling:~$</p
 			certificates on your server, you will want to create a group that will own them so that
 			root is not the only one able to access/use them.
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo groupadd ssl-cert</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo groupadd ssl-cert</p>
 		<p>
 			Now you are done with user/group set up and can move on to getting your SSL certificates
 			set up.
@@ -512,22 +532,22 @@ dekarrin@meiling:~$</p
 		<h3 id="lets-encrypt">Obtain a TLS Certificate with Let's Encrypt</h3>
 		<p>
 			In order to authenticate your server to the internet, as well as encrypt your metrics
-			traffic and dashboard traffic, you will want to use TLS certificate encryption. SSL/TLS
+			and dashboard traffic, you will want to use TLS certificate encryption. SSL/TLS
 			certificates are most commonly known for being the method by which HTTPS operates, but
 			they are used in a variety of other environments as well.
 		</p>
 		<p>
 			<a href="https://letsencrypt.org/">Let's Encrypt</a> is a Certificate Authority that can
-			be used to obtain a TLS certificate ree-of-charge. This is an exciting development in
+			be used to obtain a TLS certificate free-of-charge. This is an exciting development in
 			making the internet a more secure place; in the past, public Certificate Authorities
 			were mainly government and regulatory bodies, and all of them charged a fee for
 			processing certificate applications and renewals.
 		</p>
 		<p>
 			First, you need to install Certbot, which will automate the renewal and request process
-			for certificates. Add the Ubuntu PPA for Certbot to APT's packages:
+			for certificates. Add the Certbot Ubuntu PPA to APT's packages:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo apt-add-repository ppa:certbot/certbot
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo apt-add-repository ppa:certbot/certbot
 [sudo] password for dekarrin:
  This is the PPA for packages prepared by Debian Let's Encrypt Team and backported for Ubuntu(s).
  More info: https://launchpad.net/~certbot/+archive/ubuntu/certbot
@@ -544,7 +564,7 @@ OK</p>
 		<p>
 			Then, update the package list.
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo apt-get update
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo apt-get update
 Hit:1 https://repos.sonar.digitalocean.com/apt main InRelease
 Get:2 http://security.ubuntu.com/ubuntu xenial-security InRelease [102 kB]
 Hit:3 http://nyc2.mirrors.digitalocean.com/ubuntu xenial InRelease
@@ -558,13 +578,13 @@ Get:10 http://ppa.launchpad.net/certbot/certbot/ubuntu xenial/main Translation-e
 Fetched 1,667 kB in 0s (1,844 kB/s)
 Reading package lists... Done</p>
 		<p>And then install Certbot.</p>
-		<p class="code">dekarrin@meiling:~$ sudo apt-get install certbot</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo apt-get install certbot</p>
 		<p>
 			Now execute Certbot, and use it to request a certificate from Let's Encrypt. Replace the
 			domain at the end of the following command with the full domain that you have set up for
 			your instance:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo certbot certonly --standalone --preferred-challenges http -d meiling.example.com</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo certbot certonly --standalone --preferred-challenges http -d meiling.example.com</p>
 		<p>
 			Enter an email address when prompted and answer the other prompts appropriately. The
 			challenge server will run, and when it is completed you will see a message indicating
@@ -573,9 +593,9 @@ Reading package lists... Done</p>
 		<p>
 			Next, you will need to add a script that will properly set the permissions on the
 			certificates after renewal has completed. Open a new file in the renewal hooks section
-			of the local Let's Encrypt config.
+			of the local Let's Encrypt environment:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo nano /etc/letsencrypt/renewal-hooks/deploy/set-cert-permissions.sh</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo nano /etc/letsencrypt/renewal-hooks/deploy/set-cert-permissions.sh</p>
 		<p>
 			Then copy the following content into the file:
 		</p>
@@ -602,18 +622,18 @@ done
 #systemctl restart influxdb
 #systemctl restart grafana-server</p>
 		<p>
-			Once you are done setting up the components of our server, you will go back and
+			Once you are done setting up the components of your server, you will go back and
 			uncomment them in the file, but for now, keep them commented.
 		</p>
 		<p>
 			Give the script execution permission so that Certbot can run it.
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo chmod 744 /etc/letsencrypt/renewal-hooks/deploy/set-cert-permissions.sh</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo chmod 744 /etc/letsencrypt/renewal-hooks/deploy/set-cert-permissions.sh</p>
 		<p>
 			Now that the script is in place, run certbot again and force renewal of your
 			certificates so the deploy script has a chance to run.
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo certbot renew --force-renew</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo certbot renew --force-renew</p>
 		<p>
 			And that's it! The certificates are now ready to go, and you can start setting up the
 			components of the metrics server.
@@ -628,29 +648,31 @@ done
 		<p>
 			First, add the InfluxData repository to APT.
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo su
-root@meiling:/home/dekarrin# curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
-root@meiling:/home/dekarrin# source /etc/lsb-release
-root@meiling:/home/dekarrin# echo "deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
-root@meiling:/home/dekarrin# exit</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo su
+<span class="con-red-fg">root@meiling:/home/dekarrin#</span> curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+<span class="con-red-fg">root@meiling:/home/dekarrin#</span> source /etc/lsb-release
+<span class="con-red-fg">root@meiling:/home/dekarrin#</span> echo "deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+<span class="con-red-fg">root@meiling:/home/dekarrin#</span> exit</p>
 		<p>
 			Next, update the package lists.
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo apt-get update</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo apt-get update</p>
 		<p>
 			And then install InfluxDB.
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo apt-get install influxdb</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo apt-get install influxdb</p>
 		<p>
 			Before starting up InfluxDB, you need to modify the configuration settings. Open the
 			config file as root:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo nano /etc/influxdb/influxdb.conf</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo nano /etc/influxdb/influxdb.conf</p>
 		<p>
-			Go to the <span class="code">[retention]</span> section and set 'enabled' to 'true' and
-			set 'check-interval' to "30m". This will enable rentention policies in InfluxDB, which
-			allow you to set how long data persists before being deleted. This section of config
-			does not actually set any retention policies; it just makes it so you can use them.
+			Go to the <span class="literal">[retention]</span> section and set
+			<span class="code">enabled</span> to <span class="literal">true</span> and set
+			<span class="code">check-interval</span> to <span class="literal">"30m"</span>. This
+			will enable rentention policies in InfluxDB, which allow you to set how long data
+			persists before being deleted. This section of config does not actually set any
+			retention policies; it just makes it so you can use them.
 		</p>
 		<p class="code">[retention]
   # Determines whether retention policy enforcement enabled.
@@ -659,7 +681,7 @@ root@meiling:/home/dekarrin# exit</p>
   # The interval of time when retention policy enforcement checks run.
   <b>check-interval = "30m"</b></p>
   		<p>
-			Under the <span class="code">[http]</span> section, uncomment and set the variables to
+			Under the <span class="literal">[http]</span> section, uncomment and set the variables to
 			the values listed. This will enable using InfluxDB over HTTP.
 		</p>
 		<p class="code">[http]
@@ -675,7 +697,7 @@ root@meiling:/home/dekarrin# exit</p>
   # The default realm sent back when issuing a basic auth challenge.
   <b>realm = "InfluxDB"</b></p>
   		<p>
-			Also in the <span class="code">[http]</span> section, uncomment and set the variables to
+			Also in the <span class="literal">[http]</span> section, uncomment and set the variables to
 			the correct values to enable HTTPS encryption/authentication. Be sure to change the
 			domain name in the examples to match your instance's domain name.
 		</p>
@@ -688,10 +710,11 @@ root@meiling:/home/dekarrin# exit</p>
   # Use a separate private key location.
   <b>https-private-key = "/etc/letsencrypt/live/meiling.example.com/privkey.pem"</b></p>
 		<p>
-			In the <span class="code">[subscriber]</span> section, uncomment and set 'enabled' to
-			false. The subscription settings are used by Kapacitor, a front-end offering by
-			InfluxData. Since this guide does not use Kapacitor, it is better to disable subscribers
-			entirely in order to eliminate the overhead.
+			In the <span class="literal">[subscriber]</span> section, uncomment and set
+			<span class="code">enabled</span> to <span class="literal">false</span>. The
+			subscription settings are used by Kapacitor, a front-end offering from InfluxData. Since
+			this guide does not use Kapacitor, it is better to disable subscribers entirely in order
+			to eliminate the overhead.
 		</p>
 		<p class="code">[subscriber]
   # Determines whether the subscriber service is enabled.
@@ -700,19 +723,19 @@ root@meiling:/home/dekarrin# exit</p>
 			All other values can be left to their defualts.
 		</p>
 		<p>
-			Next, add the influxdb user to the 'ssl-cert' group in order to give it access to the
-			SSL/TLS certificates.
+			Next, add the influxdb user to the <span class="literal">ssl-cert</span> group in order
+			to give it access to the SSL/TLS certificates.
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo usermod -a -G ssl-cert influxdb</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo usermod -a -G ssl-cert influxdb</p>
 		<p>
 			Finally, start InfluxDB.
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo systemctl start influxdb</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo systemctl start influxdb</p>
 		<p>
-			Make sure InfluxDB started successfully. You should see <span class="code">Active: active (running)</span>
-			somewhere in the output:
+			Make sure InfluxDB started successfully. You should see
+			<span class="literal">Active: active (running)</span> somewhere in the output:
 		</p>
-		<p class="code">dekarrin@meiling:~$ systemctl status influxdb
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> systemctl status influxdb
 ● influxdb.service - InfluxDB is an open-source, distributed, time series database
    Loaded: loaded (/lib/systemd/system/influxdb.service; enabled; vendor preset: enabled)
    Active: active (running) since Sat 2018-02-17 21:05:11 UTC; 2min 12s ago</p>
@@ -720,7 +743,7 @@ root@meiling:/home/dekarrin# exit</p>
 			Now that InfluxDB is running, edit the deploy script for Let's Encrypt and uncomment
 			the line that restarts InfluxDB:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo nano /etc/letsencrypt/etc/letsencrypt/renewal-hooks/deploy/set-cert-permissions.sh</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo nano /etc/letsencrypt/renewal-hooks/deploy/set-cert-permissions.sh</p>
 		<p class="code">  chmod 654 "$RENEWED_LINEAGE/$x"
 done
 <b>systemctl restart influxdb</b>
@@ -732,10 +755,11 @@ done
 		</p>
 		<p>
 			Connect to InfluxDB with the <span class="code">influx</span> command. HTTPS is always
-			enabled (as per the config setup in this guide), so you will need to use the -ssl option
-			when connecting, and you will need to specify the host with the -host flag.
+			enabled (as per the config setup in this guide), so you will need to use the
+			<span class="literal">-ssl</span> option when connecting, and you will need to specify
+			the host with the <span class="literal">-host</span> flag.
 		</p>
-		<p class="code">dekarrin@meiling:~$ influx -ssl -host meiling.example.com
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> influx -ssl -host meiling.example.com
 Connected to https://meiling.example.com:8086 version 1.4.2
 InfluxDB shell version: 1.4.2</p>
 		<p>
@@ -747,7 +771,7 @@ InfluxDB shell version: 1.4.2</p>
 			Now disconnect from the database and reconnect as the admin user:
 		</p>
 		<p class="code">> exit
-dekarrin@meiling:~$ influx -ssl -host meiling.example.com -username admin -password agoodpassword
+<span class="con-green-fg">dekarrin@meiling:~$</span> influx -ssl -host meiling.example.com -username admin -password agoodpassword
 Connected to https://meiling.example.com:8086 version 1.4.2
 InfluxDB shell version: 1.4.2
 ></p>
@@ -792,7 +816,7 @@ InfluxDB shell version: 1.4.2
 		<h2 id="telegraf-client">Setting Up Telegraf on the Clients</h2>
 		<p>
 			Telegraf is a program that collects system metrics and forwards them to a data backend.
-			In this section of the guide, you will set up telegraf on your Hath clients.
+			In this section of the guide, you will set up Telegraf on your H@H clients.
 		</p>
 		<p>
 			First, install Telegraf. Go to the
@@ -802,19 +826,21 @@ InfluxDB shell version: 1.4.2
 		<p>
 			Then, take the <a href="../sidedocs/metrics/telegraf-hath.txt">sample configuration file</a>
 			and copy its contents to the telegraf configuration file. On Debian-like Linux distros,
-			this will be at /etc/telegraf/telegraf.conf.
+			this will be at <span class="literal">/etc/telegraf/telegraf.conf</span>.
 		</p>
 		<p>
-			Edit the configuration file section <span class="code">[[outputs.influxdb]]</span>. Set
-			the url in the 'urls' option to point to your server (note that you must include the
-			port number at the end, as well as the https at the beginning), and update the
-			'password' option to be what you set the password of 'hath_client_telegraf' to.
+			Edit the configuration file section <span class="literal">[[outputs.influxdb]]</span>.
+			Set the url in the <span class="code">urls</span> option to point to your server (note
+			that you must include the port number at the end, as well as the https at the
+			beginning), and update the <span class="code">password</span> option to be what you set
+			the password of <span class="literal">hath_client_telegraf</span> to.
 		</p>
 		<p>
-			Edit the configuration file section <span class="code">[agent]</span>. Set the
-			'hostname' option to a unique value on each hath client. For example, I gave my hath
-			client the name 'flandre', which will appear in charts later on in the tutorial. If you
-			have more than one hath client, make sure this is set to a different value on each one.
+			Edit the configuration file section <span class="literal">[agent]</span>. Set the
+			<span class="code">hostname</span> option to a unique value on each hath client. For
+			example, I gave my hath client the hostname <span class="literal">"flandre"</span>,
+			which will appear in the dashboard data once Grafana is set up. If you have more than
+			one hath client, make sure this is set to a different value on each one.
 		</p>
 		<p>
 			Start/Restart the Telegraf service. On Debian-like distros, this is done with
@@ -830,8 +856,8 @@ InfluxDB shell version: 1.4.2
 		</p>
 		<h2 id="telegraf-server">Setting Up Telegraf on the Metrics Server</h2>
 		<p>
-			In order to report statistics on the clients, such as hath-rate, files served, or
-			client trust/quality, you need to set up a metrics collection script to scrape the
+			In order to report statistics on the clients, such as hath-rate, files served, client
+			trust, and client quality, you need to set up a metrics collection script to scrape the
 			Hentai@Home info page and relay the metrics to InfluxDB. This tutorial will use a
 			custom python system called PyTelegrafHTTP to fetch the info, and then Telegraf will
 			handle sending it to InfluxDB.
@@ -845,34 +871,35 @@ InfluxDB shell version: 1.4.2
 		<p>
 			First, add the repository to the package manager:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo su
-root@meiling:/home/dekarrin# curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
-root@meiling:/home/dekarrin# source /etc/lsb-release
-root@meiling:/home/dekarrin# echo "deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
-root@meiling:/home/dekarrin# exit</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo su
+<span class="con-red-fg">root@meiling:/home/dekarrin#</span> curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+<span class="con-red-fg">root@meiling:/home/dekarrin#</span> source /etc/lsb-release
+<span class="con-red-fg">root@meiling:/home/dekarrin#</span> echo "deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+<span class="con-red-fg">root@meiling:/home/dekarrin#</span> exit</p>
 		<p>
 			Then, update the package list:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo apt-get update</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo apt-get update</p>
 		<p>
 			And then install Telegraf:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo apt-get install telegraf</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo apt-get install telegraf</p>
 		<p>
 			Next, take the contents of the <a href="../sidedocs/metrics/telegraf-server.txt">sample server telegraf config file</a>
 			and copy the contents to /etc/telegraf/telegraf.conf.
 		</p>
 		<p>
-			Edit the config file and make sure to set both urls properties to point at your server;
-			make sure to keep the port number and the https in the URL. Also update both 'password'
-			properties and set them to the password of the "hath_netstats" user.
+			Edit the config file and make sure to set both <span class="code">urls</span> properties
+			to point at your server; make sure to keep the port number and the https in the URL.
+			Also update both <span class="code">password</span> properties and set them to the
+			password of the <span class="literal">hath_netstats</span> user.
 		</p>
 		<p>
-			Start up Telegraf (with restart to ensure configuration is loaded) and ensure it is
-			running:
+			Start up Telegraf (with <span class="code">restart</span> to ensure configuration is
+			loaded) and check that it started properly:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo systemctl restart telegraf
-dekarrin@meiling:~$ systemctl status telegraf
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo systemctl restart telegraf
+<span class="con-green-fg">dekarrin@meiling:~$</span> systemctl status telegraf
 ● telegraf.service - The plugin-driven server agent for reporting metrics into InfluxDB
    Loaded: loaded (/lib/systemd/system/telegraf.service; enabled; vendor preset: enabled)
    Active: active (running) since Sat 2018-02-17 22:48:36 UTC; 15min ago</p>
@@ -887,29 +914,32 @@ dekarrin@meiling:~$ systemctl status telegraf
 			environment; other environments will need to have it installed manually.
 		</p>
 		<p>
-			First, install git so you can download the latest version of PyTelegrafHTTP:
+			First, install <span class="code">git</span> so you can download the latest version of
+			PyTelegrafHTTP:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo apt-get install git</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo apt-get install git</p>
 		<p>
-			PyTelegrafHTTP requires Python3, so install it now:
+			PyTelegrafHTTP requires <span class="code">python3</span>, so install it now:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo apt-get install python3</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo apt-get install python3</p>
 		<p>
-			The last dependency for installing PyTelegrafHTTP is pip, install that as well:
+			The last dependency for installing PyTelegrafHTTP is <span class="code">pip</span>;
+			install that as well:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo apt-get install python3-pip</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo apt-get install python3-pip</p>
 		<p>
 			Now pull the PyTelegrafHTTP repository:
 		</p>
-		<p class="code">dekarrin@meiling:~$ git clone https://github.com/dekarrin/pytelegrafhttp.git</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> git clone https://github.com/dekarrin/pytelegrafhttp.git</p>
 		<p>
-			CD into the repository folder, and execute the install script for Debian/Ubuntu systems.
-			If you are not on a Debian/Ubuntu system, you will need to find an alternative way of
-			setting up the file. Otherwise, go ahead and execute the script. The parameter at the
-			end is the user to install the script as, which at the time, must be the root user:
+			Change directory to the repository folder, and execute the install script for
+			Debian/Ubuntu systems. If you are not on a Debian/Ubuntu system, you will need to find
+			an alternative way of setting up the file. Otherwise, go ahead and execute the script.
+			The parameter at the end is the user to install the script as, which at the time, must
+			be the root user:
 		</p>
-		<p class="code">dekarrin@meiling:~$ cd pytelegrafhttp
-dekarrin@meiling:~/pytelegrafhttp$ sudo scripts/install.sh root
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> cd pytelegrafhttp
+<span class="con-green-fg">dekarrin@meiling:~/pytelegrafhttp$</span> sudo scripts/install.sh root
 ...
 main config located in '/etc/pytelegrafhttp/config.py'
 Unit file symlinked as 'pytelegrafhttp.service'.
@@ -919,18 +949,19 @@ To start, do `systemctl start pytelegrafhttp`</p>
 			config file format is far beyond the scope of this guide; it is a normal python module,
 			but the variables themselves are moderately complex. Instead, copy the contents of the
 			<a href="../sidedocs/metrics/pytelegrafhttp-config.py">example PyTelegrafHTTP config</a>
-			into the real config file at <span class="code">/etc/pytelegrafhttp/config.py</span>.
+			into the real config file at <span class="literal">/etc/pytelegrafhttp/config.py</span>.
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo nano /etc/pytelegrafhttp/config.py</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo nano /etc/pytelegrafhttp/config.py</p>
 		<p>
-			Make sure to update the scraper_username and scraper_password variables with your actual
-			E-hentai credentials. Because these are stored in this file, make sure that the
-			permissions on the file are such that only root can read it.
+			Make sure to update the <span class="code">scraper_username</span> and
+			<span class="code">scraper_password</span> variables with your actual E-hentai
+			credentials. Because these are stored in this file, make sure that the permissions on
+			the file are such that only root and the pytelegrafhttp user can read it.
 		</p>
 		<p>
 			Once the config file is updated, start PyTelegrafHTTP:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo systemctl start pytelegrafhttp</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo systemctl start pytelegrafhttp</p>
 		<p>
 			Give it about 60 seconds to log in, and then verify that is running:
 		</p>
@@ -970,17 +1001,18 @@ Feb 17 23:52:03 meiling /usr/local/bin/pytelhttp[8168]: Sleep for 119.28270 seco
 		<p>
 			Now that PyTelegrafHTTP is installed, you'll want to double-check that Telegraf is
 			properly relaying the metrics from it. Wait about 2 minutes and check the status of
-			Telegraf once again, as sudo to make sure you can see the journal log as well.
+			Telegraf once again. Use <span class="code">sudo</span> to make sure you can see the
+			journal log as well.
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo systemctl status telegraf</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo systemctl status telegraf</p>
 		<p>
 			It should look very similar to the status it had right after it started, since Telegraf
-			does not log regular behavior. If you see problems along the lines of
+			does not log regular behavior. If you see errors such as
 			<span class="code">Error writing to output [influxdb]: Could not write to any InfluxDB server in cluster</span>,
 			it's possible your configuration changes were not picked up. In this case, restarting
 			the service should cause the configuration to be reloaded:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo systemctl restart telegraf</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo systemctl restart telegraf</p>
 		<p>
 			And then try checking the status again after another 2 minutes.
 		</p>
@@ -992,37 +1024,37 @@ Feb 17 23:52:03 meiling /usr/local/bin/pytelhttp[8168]: Sleep for 119.28270 seco
 		<p>
 			Now you've got multiple data sources feeding into a high-performance storage backend.
 			Next up is getting a way to view all that data. Grafana is a front-end application
-			designed to work with metric storage systems. It can display graphs/charts/metrics in
-			easy-to-read dashboards.
+			designed to work with metrics storage systems. It can display graphs, charts, and metric
+			data in easy-to-read dashboards.
 		</p>
 		<h3 id="grafana-install">Install Grafana</h3>
 		<p>
 			Add the repository PPA to the package manager:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo su
-root@meiling:/home/dekarrin# echo "deb https://packagecloud.io/grafana/stable/debian/ jessie main" >> /etc/apt/sources.list
-root@meiling:/home/dekarrin# curl https://packagecloud.io/gpg.key | sudo apt-key add -
-root@meiling:/home/dekarrin# exit</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo su
+<span class="con-red-fg">root@meiling:/home/dekarrin#</span> echo "deb https://packagecloud.io/grafana/stable/debian/ jessie main" >> /etc/apt/sources.list
+<span class="con-red-fg">root@meiling:/home/dekarrin#</span> curl https://packagecloud.io/gpg.key | sudo apt-key add -
+<span class="con-red-fg">root@meiling:/home/dekarrin#</span> exit</p>
 		<p>
 			Next, update the package lists:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo apt-get update</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo apt-get update</p>
 		<p>
 			And install Grafana:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo apt-get install grafana</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo apt-get install grafana</p>
 		<p>
 			Next, you need to do some basic config of the Grafana server. Most of the set up can be
 			done via the web UI, but you'll want to set up server connection security first. Go ahead
 			and open the Grafana configuration file:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo nano /etc/grafana/grafana.ini</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo nano /etc/grafana/grafana.ini</p>
 		<p>
-			In the <span class="code">[server]</span> section, uncomment and set the variables
-			<span class="literal">protocol</span> to <span class="literal">https</span>,
-			<span class="literal">http_port</span> to <span class="literal">443</span>,
-			<span class="literal">cert_file</span> to <span class="literal">/etc/letsencrypt/live/meiling.example.com/fullchain.pem</span>,
-			and <span class="literal">cert_key</span> to <span class="literal">/etc/letsencrypt/live/meiling.example.com/privkey.pem</span>,
+			In the <span class="literal">[server]</span> section, uncomment and set the variables
+			<span class="code">protocol</span> to <span class="literal">https</span>,
+			<span class="code">http_port</span> to <span class="literal">443</span>,
+			<span class="code">cert_file</span> to <span class="literal">/etc/letsencrypt/live/meiling.example.com/fullchain.pem</span>,
+			and <span class="code">cert_key</span> to <span class="literal">/etc/letsencrypt/live/meiling.example.com/privkey.pem</span>,
 			making sure to replace the domain names with your instance's actual domain name. This
 			will enable HTTPS for Grafana, and will tell it to only use HTTPS to serve content.
 		</p>
@@ -1042,8 +1074,8 @@ root@meiling:/home/dekarrin# exit</p>
 <b>cert_file = /etc/letsencrypt/live/meiling.dekarrin.com/fullchain.pem</b>
 <b>cert_key = /etc/letsencrypt/live/meiling.dekarrin.com/privkey.pem</b></p>
 		<p>
-			In the <span class="code">[security]</span> section, uncomment and set
-			<span class="literal">secret_key</span> to a random 20-character string of mixed-case
+			In the <span class="literal">[security]</span> section, uncomment and set
+			<span class="code">secret_key</span> to a random 20-character string of mixed-case
 			letters and numbers. This will add an additional layer of security by changing the
 			cookie signing key from the default.
 		</p>
@@ -1057,40 +1089,41 @@ root@meiling:/home/dekarrin# exit</p>
 # used for signing
 </b>secret_key = tHe20CharacterStrINg</b></p>
 		<p>
-			That's it for file-based configuration. Next, add the Grafana user to the ssl-cert group
-			so it's able to access the SSL/TLS certificates:
+			That's it for file-based configuration. Next, add the Grafana user to the
+			<span class="literal">ssl-cert</span> group so it's able to access the SSL/TLS
+			certificates:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo usermod -a -G ssl-cert grafana</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo usermod -a -G ssl-cert grafana</p>
 		<p>
 			Additionally, the typical Grafana install process does not grant Grafana permission to
 			bind to ports lower than 1000. Since it will be using port 443, you will need to grant
 			it that permission manually:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo setcap 'cap_net_bind_service=+ep' /usr/sbin/grafana-server</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo setcap 'cap_net_bind_service=+ep' /usr/sbin/grafana-server</p>
 		<p>
 			Next, you need to start the grafana service. Tell systemd to reload daemons:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo systemctl daemon-reload</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo systemctl daemon-reload</p>
 		<p>
 			And then tell it to start the grafana service:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo systemctl start grafana-server</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo systemctl start grafana-server</p>
 		<p>
 			Check on its status, and make sure it is active:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo systemctl status grafana-server
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo systemctl status grafana-server
 ● grafana-server.service - Grafana instance
    Loaded: loaded (/usr/lib/systemd/system/grafana-server.service; disabled; vendor preset: enabled)
    Active: active (running) since Sun 2018-02-18 16:43:28 UTC; 4s ago</p>
    		<p>
 			Next, enable the Grafana service so that it will automatically start at boot:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo systemctl enable grafana-server.service</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo systemctl enable grafana-server.service</p>
 		<p>
 			Finally, uncomment Grafana's line in the lets-encrypt deploy script so it is restarted
 			when certificates are renewed:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo nano /etc/letsencrypt/etc/letsencrypt/renewal-hooks/deploy/set-cert-permissions.sh</p>
+		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo nano /etc/letsencrypt/renewal-hooks/deploy/set-cert-permissions.sh</p>
 		<p class="code">  chmod 654 "$RENEWED_LINEAGE/$x"
 done
 systemctl restart influxdb
@@ -1110,17 +1143,19 @@ systemctl restart influxdb
 			interface, so head over to https://your.domain.address to start.
 		</p>
 		<p>
-			Log in with the default username 'admin' and the default password 'admin'. First, you
-			will be changing that password. Go to your user profile.
+			Log in with the default username <span class="literal">admin</span> and the default
+			password <span class="literal">admin</span>. First, you will be changing the password.
+			Go to your user profile.
 		</p>
 		<div class="captioned-image">
 			<img src="../images/metrics/grafana-profile.png" width="700px" alt="Grafana Profile Menu">
 			<p>Grafana menu to get to profile.<p>
 		</div>
 		<p>
-			Fill in the 'name' and 'email' fields and hit 'Update' in that section if you wish. Go
-			to the "Change Password" section. Use the dialog to change the admin password to
-			something better than 'admin'. Make sure that this password is different from your
+			Fill in the <span class="code">name</span> and <span class="code">email</span> fields
+			and hit 'Update' in that section if you wish. Go to the "Change Password" section. Use
+			the dialog to change the admin password to something better than
+			<span class="literal">admin</span>. Make sure that this password is different from your
 			instance login passwords, your InfluxDB user passwords, and your E-Hentai password.
 		</p>
 		<p>
@@ -1132,20 +1167,25 @@ systemctl restart influxdb
 			Hit the "Add data source" button to start creating the first data source.
 		</p>
 		<p>
-			Set the 'Name' to "Hath Client Hardware Metrics". Check the box for this to be the
-			default datasource. Change the type dropdown to "InfluxDB", and the rest of the fields
-			should update to be InfluxDB-specific.
+			Set the <span class="code">Name</span> to
+			<span class="literal">Hath Client Hardware Metrics</span>. Check the box for this to be
+			the default datasource. Change the <span class="code">Type</span> dropdown to
+			<span class="literal">InfluxDB</span>, and the rest of the fields should update to be
+			InfluxDB-specific.
 		</p>
 		<p>
-			Under "HTTP Settings", set the URL to your InfluxDB server, which in this guide is the
-			same as the Grafana server but with the port number appended to the end. Set the
-			"Access" type to "proxy"; "direct" is only really suitable for a high-load Grafana
-			instance.
+			Under <span class="literal">HTTP Settings</span>, set the <span class="code">URL</span>
+			to your InfluxDB server, which in this guide is the same as the Grafana server but with
+			the port number appended to the end. Set the <span class="code">Access</span> type to
+			<span class="literal">proxy</span>; <span class="literal">direct</span> is only
+			necessary for a high-load Grafana instance.
 		</p>
 		<p>
-			Leave the "HTTP Auth" section blank, and skip down to "InfluxDB Details". Set the
-			database to "hath_client_metrics", the username to "grafana", and the password to the
-			password for the InfluxDB user grafana.
+			Leave the <span class="literal">HTTP Auth</span> section blank, and skip down to
+			<span class="literal">InfluxDB Details</span>. Set the database to
+			<span class="literal">hath_client_metrics</span>, the username to
+			<span class="literal">grafana</span>, and the password to the password for the InfluxDB
+			user <span class="literal">grafana</span>.
 		</p>
 		<div class="captioned-image">
 			<img src="../images/metrics/grafana-datasource-1.png" width="700px" alt="Grafana Datasource">
@@ -1157,9 +1197,10 @@ systemctl restart influxdb
 		</p>
 		<p>
 			Go back to the Data Sources section of Grafana and repeat the process for the second
-			data source. Do not check the "Default" box on this one. Use the name "Hath Client
-			Network Health" and the database "hath_client_network_health" for this one, then add the
-			new data source.
+			data source. Do not check the <span class="code">Default</span> box on this one. Use the
+			name <span class="literal">Hath Client Network Health</span> and the database
+			<span class="literal">hath_client_network_health</span> for this one, then add the new
+			data source.
 		</p>
 		<div class="captioned-image">
 			<img src="../images/metrics/grafana-datasource-2.png" width="700px" alt="Grafana Datasource">
@@ -1167,8 +1208,9 @@ systemctl restart influxdb
 		</div>
 		<p>
 			Go back to the Data Sources section of Grafana and add one last data source for the
-			third database. Again, keep the "Default" box clear. Use the name "Hath Network" and the
-			database "hath_network". Add the new data source.
+			third database. Again, keep the <span class="code">Default</span> box unchecked. Use the
+			name <span class="literal">Hath Network</span> and the database
+			<span class="literal">hath_network</span>. Add the new data source.
 		</p>
 		<div class="captioned-image">
 			<img src="../images/metrics/grafana-datasource-3.png" width="700px" alt="Grafana Datasource">
@@ -1188,9 +1230,9 @@ systemctl restart influxdb
 		</p>
 		<h3 id="grafana-dashboards">Create Dashboards</h3>
 		<p>
-			Your metrics stack is now ready to start building dashboards with Grafana. To make it
-			easier, I have made some pre-built dashboards available that you can use to get started
-			right away: <ul>
+			Your metrics stack is now ready. You can now start building dashboards with Grafana. To
+			make it easier to get started right away, I have made some pre-built dashboards
+			available: <ul>
 				<li><a href="../sidedocs/metrics/essentialhealth.json">Essential Health</a></li>
 				<li><a href="../sidedocs/metrics/globalnet.json">Global Hath Network Stats</a></li>
 				<li><a href="../sidedocs/metrics/clienthardware.json">Hath Client Hardware</a></li>
@@ -1218,15 +1260,15 @@ systemctl restart influxdb
 			datapoints, something has gone wrong during the process, and you will need to fix your
 			setup.
 		</p>
-		<p>You may notice that the graphs are only partially filled with data. This is simply
-			because not enough data has been collected for the time period that the dashboard is
-			displaying in order to fill it. Don't worry, it will fill up eventually.
+		<p>
+			You may notice that the graphs are only partially filled with data. This is because not
+			enough data has been collected for the time period that the dashboard is displaying in
+			order to fill it. Don't worry, it will fill up eventually.
 		</p>
 		<p>
-			And, that's it! Repeat for any/all dashboards given, and you'll have an initial set up
-			of dashboards. If you find any dashboard particularly useful, you can hit the star on
-			toolbar to "star" the dashboard, which puts it in the starred dashboard lists on the
-			home page.
+			And, that's it! Repeat for any/all dashboards you want, and you'll have an initial set
+			up. If you find any dashboard particularly useful, you can hit the star on the toolbar
+			to "star" the dashboard, which puts it in the starred dashboard lists on the home page.
 		</p>
 		<p>
 			Note for multi-client setup: If you are monitoring multiple hath clients, you will need
@@ -1245,7 +1287,7 @@ systemctl restart influxdb
 		<h3 id="alerting">Alerting</h3>
 		<p>
 			Grafana can be set up to send out an Alert whenever a value on a panel passes a certain
-			threshold. To setup an alert, go to any panel, click Edit, and go to the Alerts tab.
+			threshold. To set up an alert, go to any panel, click Edit, and go to the Alerts tab.
 		</p>
 		<p>
 			For more information on Alerting, see the
@@ -1254,7 +1296,7 @@ systemctl restart influxdb
 		</p>
 		<h3 id="ifttt">Using IFTTT for Phone Notifications</h3>
 		<p>
-			If-this-then-that (IFTTT) is a generic service for creating online mini-apps that react
+			If-This-Then-That (IFTTT) is a generic service for creating online mini-apps that react
 			to certain actions. By creating a Grafana notification channel that POSTs to a Maker
 			endpoint, IFTTT can receive the event and perform an action, such as alerting the phone
 			app. IFTTT uses the WebHooks service to receive the events.

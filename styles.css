@@ -67,7 +67,7 @@ a:hover, a:focus, a:visited:hover, a:visited:focus {
 
 .code {
 	white-space: pre;
-	background: #555555;
+	background: #444444;
 	color: #ffffff;
 	font-family: "Courier New", monospace;
 	border-radius: 4px 4px;
@@ -88,6 +88,18 @@ p.code {
 	border-radius: 4px 4px;
 	border: 1px solid #bdbdbd;
 	padding: 1px 4px;
+}
+
+.con-green-fg {
+	color: #00cb00;
+}
+
+.con-blue-fg {
+	color: #0000ff;
+}
+
+.con-red-fg {
+	color: #ff4444;
 }
 
 h1, h2, h3 {
