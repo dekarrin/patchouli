@@ -128,10 +128,10 @@
 		<p>
 			The quick and easy ways to get a server with good uptime that you don’t have to worry
 			about maintaining yourself are to get an instance on an Infrastructure-as-a-Service
-			system or to get a VPS. VPSs tend to be a little on the slower side at smaller scale,
-			do not often offer easy scaling options (not that this is a concern here), but most
-			importantly do not usually give you full root access to the machine; for those reasons,
-			I recommend getting a VM instance.
+			system or to get a Virtual Private Server. VPSs tend to be a little on the slower side
+			at smaller scale, do not often offer easy scaling options (not that this is a concern
+			here), but most importantly do not usually give you full root access to the machine; for
+			those reasons, I recommend getting an instance from an IaaS platform.
 		</p>
 		<h3 id="create-instance">Create an Instance on Digital Ocean</h3>
 		<p>
@@ -142,7 +142,7 @@
 		</p>
 		<p>
 			DigitalOcean is an IaaS platform that offers excellent prices for small-scale VMs. They
-			call their instances “droplets”, and they offer a variety of different types depending
+			call their instances "droplets", and they offer a variety of different types depending
 			on what your needs are. For our purposes, the smallest standard droplet they offer is
 			perfectly sufficient, and costs only $5 per month at the time of this writing.
 		</p>
@@ -154,27 +154,29 @@
 		<p>
 			The way we will be setting up the server infrastructure, it is extremely unlikely that
 			you will be charged anything above $5 per month, but as with other IaaS platforms, you
-			are billed based on usage, so it might be a good to set up a “Billing Alert” on the
+			are billed based on usage, so it might be a good to set up a "Billing Alert" on the
 			off-chance that something is inadvertently changed which causes you to be billed more
 			than you would like. I set my alert to ping me if my bill ever exceeds $10 to be on the
-			safe side. To configure this, head over to your account settings, go under “Billing”,
-			and scroll down to “Billing Alerts” to set a threshold for you to be warned at. Don’t
+			safe side. To configure this, head over to your account settings, go under "Billing",
+			and scroll down to "Billing Alerts" to set a threshold for you to be warned at. Don’t
 			forget to save!
 		</p>
 		<p>
 			Okay cool, now let’s actually create an instance. Hit the green Create button at the top
-			right corner of the page and select “Droplets” (or just go to
+			right corner of the page and select "Droplets" (or just go to
 			<a href="https://cloud.digitalocean.com/droplets/new">https://cloud.digitalocean.com/droplets/new</a>).
 		</p>
 		<p>
 			You will need to select an operating system. The rest of this guide assumes that you are
 			using Ubuntu, but you can select a different distro if you are more familiar with it and
 			prefer it (though you will need to know how to translate the rest of this guide into the
-			dialect of that distro). Just make sure to select a Linux distribution (note that BSD is
+			dialect of that distro). In addition, the metrics collection daemon is currently only
+			optimized for installation on systems that use systemd (such as Debian/Ubuntu), so keep
+			that in mind as well. Just make sure to select a Linux distribution (note that BSD is
 			not the same as Linux!), or you are on your own for the rest of the guide.
 		</p>
 		<p>
-			Next, choose a droplet size. The smallest profile under “Standard Droplets” will work
+			Next, choose a droplet size. The smallest profile under "Standard Droplets" will work
 			just fine; at the time of this writing that is a 1GB RAM/1 CPU/25GB Disk Space/1 TB
 			Transfer image that costs $5 per month. If you really would prefer to have a beefier
 			box, go for it, but it will cost you more.
@@ -187,16 +189,15 @@
 		<p>
 			For the data center, pick whatever you want. At the the scale that we are dealing with
 			here it really doesn’t matter. If I had to make a recommendation, I’d say pick a
-			location that is generally closest to you for general use, as it might be miniscule
-			fractions of a second faster. All of the data centers are just fine, though note that
-			some features (such as block storage) are limited to particular data centers.
+			location that is closest to you for general use, as it might be miniscule fractions of a
+			second faster. All of the data centers are just fine, though note that some features
+			(such as block storage) are limited to particular data centers.
 		</p>
 		<p>
-			For additional options, check whatever makes sense to you. I have my box set up with
-			IPv6 and Monitoring. It’s also be a good idea to add weekly Backups. This will cause
-			your bill to be a little higher (20% higher as of the time of this writing), but it is
-			well worth it to ensure your data is not lost in the event of catastrophic system
-			failure.
+			For "additional options", check whatever makes sense to you. I have my box set up with
+			IPv6 and Monitoring. It’s also a good idea to add weekly Backups. This will cause your
+			bill to be a little higher (20% higher as of the time of this writing), but it is well
+			worth it to ensure your data is not lost in the event of catastrophic system failure.
 		</p>
 		<p>
 			Setting up an SSH key during droplet set up is not a requirement, but it will make it so
@@ -210,14 +211,14 @@
 			want, you can stay with the default name which is based on the droplet profile, but I
 			find it makes it much easier to give it a more meaningful name. Many admins give the
 			hosts names based on the application running on the server; I give my hosts names based
-			on waifus. For my server infrastructure, I use Touhou characters such as “sakuya”,
-			“flandre”, “patchouli”, etc. No matter what, in order to make your life easier, make
+			on anime characters. For my server infrastructure, I use Touhou characters such as "sakuya",
+			"flandre", "patchouli", etc. No matter what, in order to make your life easier, make
 			sure to use only lower-case characters and dashes; this will also make it so your domain
 			names can be the same as your host names. For the purposes of this guide, I’m going to
 			call mine "meiling".
 		</p>
 		<p>
-			Finally, hit “Create”, give the box a few moments to spin up, and you are done! You
+			Finally, hit "Create", give the box a few moments to spin up, and you are done! You
 			should now have an internet-accessible droplet with a static IPv4 address (and a static
 			IPv6 address if you had selected it).
 		</p>
@@ -234,13 +235,13 @@
 		<p>
 			On DigitalOcean, new droplets are open to the internet on all ports. This is not the
 			greatest idea; we will want to close all ports that are not necessary for operation. To
-			do this, we will create a “Cloud Firewall” (also known as a “Security Group” on some
+			do this, we will create a "Cloud Firewall" (also known as a "Security Group" on some
 			IaaS platforms).
 		</p>
 		<p>
-			Go to the “Networking” tab on DigitalOcean, and select the “Firewalls” sub-tab. Hit the
-			“Create Firewall” button and call it something meaningful; something like
-			“Influx-Grafana-HathTele” will work just fine.
+			Go to the "Networking" tab on DigitalOcean, and select the "Firewalls" sub-tab. Hit the
+			"Create Firewall" button and call it something meaningful; something like
+			"Influx-Grafana-HathTele" will work just fine.
 		</p>
 		<p>
 			For Inbound Rules, first make sure that there is a rule for SSH over TCP for All IPv4
@@ -248,26 +249,26 @@
 		</p>
 		<p>
 			Add an inbound rule for HTTP and a rule for HTTPS; the fields should auto-populate, but
-			make sure both rules contain the sources “All IPv4” and “All IPv6”. This will allow
+			make sure both rules contain the sources "All IPv4" and "All IPv6". This will allow
 			Grafana to be accessed over the web, as well as enable Certbot for automatic TLS
 			certificate renewal.
 		</p>
 		<p>
-			Also add a “Custom”-type inbound rule for TCP traffic under port 8086, again making sure
-			it contains the sources “All IPv4” and “All IPv6”. This will make InfluxDB accessible
+			Also add a "Custom"-type inbound rule for TCP traffic under port 8086, again making sure
+			it contains the sources "All IPv4" and "All IPv6". This will make InfluxDB accessible
 			over the web.
 		</p>
 		<p>
 			The default outbound rules should be fine. Make sure that ICMP, All TCP, and All UDP
-			exist as rules, and make sure they each have “All IPv4” and “All IPv6” in their
-			“Destinations” fields.
+			exist as rules, and make sure they each have "All IPv4" and "All IPv6" in their
+			"Destinations" fields.
 		</p>
 		<p>
-			Under “Apply to Droplets”, start typing the hostname of your droplet and select it from
+			Under "Apply to Droplets", start typing the hostname of your droplet and select it from
 			the list when it pops up.
 		</p>
 		<p>
-			Finally, hit the “Create Firewall” button to save the firewall and apply it to your
+			Finally, hit the "Create Firewall" button to save the firewall and apply it to your
 			instance. Now, traffic on other ports will not be allowed through, and your box is
 			slightly more secure. I mean don’t go around bragging about it, this is super basic
 			security. But at least it won’t ever listen to traffic on other ports if someone happens
@@ -296,31 +297,31 @@
 			Once the nameservers have been properly updated, head over to the Networking tab of the
 			DigitalOcean control panel. You should see your domain name in the list there; if you
 			don’t, go ahead and add the raw (without anything before it, including www) domain name.
-			For example, if I were to own the domain “example.com”. I would enter that exactly
+			For example, if I were to own the domain "example.com". I would enter that exactly
 			(without the quotes). Don’t actually use example.com, use whatever domain name you own.
 		</p>
 		<p>
 			Next, we will add some DNS records to point at your server. Click on your domain in the
-			list and you should see the “Create New Record” interface. Go to the “A” tab to create a
+			list and you should see the "Create New Record" interface. Go to the "A" tab to create a
 			new A-record; this will point the domain name to your droplet’s IPv4 address.
 		</p>
 		<p>
 			We’ll be using a subdomain, which is the part in the address that comes before the
-			domain we purchased. For example, in “www.example.com”, “example.com” would be the
-			domain name and “www” would be the subdomain. Enter something memorable; it usually
+			domain we purchased. For example, in "www.example.com", "example.com" would be the
+			domain name and "www" would be the subdomain. Enter something memorable; it usually
 			makes sense to just call it the same as whatever hostname you assigned to the droplet
-			during creation. Enter the subdomain in the “Hostname” field (for the instance I created
-			during this guide, I would use “meiling” as the subdomain).
+			during creation. Enter the subdomain in the "Hostname" field (for the instance I created
+			during this guide, I would use "meiling" as the subdomain).
 		</p>
 		<p>
-			In the “Will Direct To” box, select the droplet that you created. In the “TTL” field,
+			In the "Will Direct To" box, select the droplet that you created. In the "TTL" field,
 			put down a number that makes sense. This number is how often the DNS network will check
 			for changes in the record, and will affect how long it takes to update should you ever
 			change what the record points to. 3600 seconds is one hour and is just fine.
 		</p>
 		<p>
-			Finally, hit the “Create Record” button and you are done! If you enabled IPv6 for your
-			droplet, you should also create an AAAA-record going to the “AAAA” tab and repeating the
+			Finally, hit the "Create Record" button and you are done! If you enabled IPv6 for your
+			droplet, you should also create an AAAA-record going to the "AAAA" tab and repeating the
 			process with the same information.
 		</p>
 		<p>
@@ -472,7 +473,7 @@ uid=1000(dekarrin) gid=1000(dekarrin) groups=1000(dekarrin),27(sudo)</p>
 		</p>
 		<p>
 			Now, your new user is set up and can use sudo. Log out of the instance with ‘exit’, and
-			log back in as your new user (“yournewuser@yourserver”).
+			log back in as your new user ("yournewuser@yourserver").
 		</p>
 		<p class="code">root@meiling:~# exit
 logout
