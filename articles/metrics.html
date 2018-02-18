@@ -72,7 +72,8 @@
 			<li><a href="#grafana">Setting up Grafana</a>
 				<ul>
 					<li><a href="#grafana-install">Install Grafana</a></li>
-					<li><a href="#grafana-charts">Create Charts</a></li>
+					<li><a href="#grafana-webconfig">Finish Setup in Webapp</a></li>
+					<li><a href="#grafana-dashboards">Create Dashboards</a></li>
 				</ul>
 			</li>
 			<li><a href="#whats-next">Where to go from Here</a>
@@ -1102,7 +1103,90 @@ root@meiling:/home/dekarrin# exit</p>
 			<img src="../images/metrics/grafana-login.png" width="700px" alt="Grafana Login">
 			<p>The default Grafana login page for a fresh install.<p>
 		</div>
-		<h3 id="grafana-charts">Create Charts</h3>
+		<h3 id="grafana-webconfig">Finish Setup in Webapp</h3>
+		<p>
+			Now that your Grafana server is running, you'll need to set an admin password for the
+			web interface and create your datasources. All of this can be done through the web
+			interface, so head over to https://your.domain.address to start.
+		</p>
+		<p>
+			Log in with the default username 'admin' and the default password 'admin'. First, you
+			will be changing that password. Go to your user profile.
+		</p>
+		<div class="captioned-image">
+			<img src="../images/metrics/grafana-profile.png" width="700px" alt="Grafana Profile Menu">
+			<p>Grafana menu to get to profile.<p>
+		</div>
+		<p>
+			Fill in the 'name' and 'email' fields and hit 'Update' in that section if you wish. Go
+			to the "Change Password" section. Use the dialog to change the admin password to
+			something better than 'admin'. Make sure that this password is different from your
+			instance login passwords, your InfluxDB user passwords, and your E-Hentai password.
+		</p>
+		<p>
+			Now use the menu in the upper-left hand to go to the "Data Sources" section of Grafana.
+			Right now, there aren't any defined; you will need to add one for each of the three
+			databases you defined when setting up InfluxDB.
+		</p>
+		<p>
+			Hit the "Add data source" button to start creating the first data source.
+		</p>
+		<p>
+			Set the 'Name' to "Hath Client Hardware Metrics". Check the box for this to be the
+			default datasource. Change the type dropdown to "InfluxDB", and the rest of the fields
+			should update to be InfluxDB-specific.
+		</p>
+		<p>
+			Under "HTTP Settings", set the URL to your InfluxDB server, which in this guide is the
+			same as the Grafana server but with the port number appended to the end. Set the
+			"Access" type to "proxy"; "direct" is only really suitable for a high-load Grafana
+			instance.
+		</p>
+		<p>
+			Leave the "HTTP Auth" section blank, and skip down to "InfluxDB Details". Set the
+			database to "hath_client_metrics", the username to "grafana", and the password to the
+			password for the InfluxDB user grafana.
+		</p>
+		<div class="captioned-image">
+			<img src="../images/metrics/grafana-datasource-1.png" width="700px" alt="Grafana Datasource">
+			<p>Settings for first Grafana data source.<p>
+		</div>
+		<p>
+			Hit the "Add" button at the bottom, and you should see an indicator that tells you the
+			datasource has been added and is currently working properly.
+		</p>
+		<p>
+			Go back to the Data Sources section of Grafana and repeat the process for the second
+			data source. Do not check the "Default" box on this one. Use the name "Hath Client
+			Network Health" and the database "hath_client_network_health" for this one, then add the
+			new data source.
+		</p>
+		<div class="captioned-image">
+			<img src="../images/metrics/grafana-datasource-2.png" width="700px" alt="Grafana Datasource">
+			<p>Settings for second Grafana data source.<p>
+		</div>
+		<p>
+			Go back to the Data Sources section of Grafana and add one last data source for the
+			third database. Again, keep the "Default" box clear. Use the name "Hath Network" and the
+			database "hath_network". Add the new data source.
+		</p>
+		<div class="captioned-image">
+			<img src="../images/metrics/grafana-datasource-3.png" width="700px" alt="Grafana Datasource">
+			<p>Settings for third Grafana data source.<p>
+		</div>
+		<p>
+			Go back to the Data Sources section, and you should see all three of your data sources
+			listed.
+		</p>
+		<div class="captioned-image">
+			<img src="../images/metrics/grafana-datasources.png" width="700px" alt="Grafana Datasources">
+			<p>Three configured Grafana data sources.<p>
+		</div>
+		<p>
+			Configuration of Grafana is now complete, and you can move on to create charts and
+			dashboards.
+		</p>
+		<h3 id="grafana-dashboards">Create Dashboards</h3>
 		<h2 id="whats-next">Where To Go From Here</h2>
 		<h3 id="alerting">Alerting</h3>
 		<h3 id="ifttt">Using IFTTT for Phone Notifications</h3>
