@@ -486,7 +486,7 @@ uid=1000(dekarrin) gid=1000(dekarrin) groups=1000(dekarrin),27(sudo)</p>
 		<p class="code">root@meiling:~# exit
 logout
 Connection to meiling.example.com closed.
-[z002v4m@dca9047d6bab 09:27:43 ~]$ ssh dekarrin@meiling.example.com
+[dekarrin@kousakakirino 09:27:43 ~]$ ssh dekarrin@meiling.example.com
 dekarrin@meiling.example.com's password:
 …
 dekarrin@meiling:~$</p>
@@ -520,7 +520,7 @@ dekarrin@meiling:~$</p
 		<h3 id="lets-encrypt">Obtain a TLS Certificate with Let's Encrypt</h3>
 		<p>
 			In order to authenticate your server to the internet, as well as encrypt your metrics
-			traffic and dashboard traffic, you will want to use TLS certificate encryption. TLS/SSL
+			traffic and dashboard traffic, you will want to use TLS certificate encryption. SSL/TLS
 			certificates are most commonly known for being the method by which HTTPS operates, but
 			they are used in a variety of other environments as well.
 		</p>
@@ -608,8 +608,7 @@ do
   chmod 654 "$RENEWED_LINEAGE/$x"
 done
 #systemctl restart influxdb
-#systemctl restart grafana-server
-#systemctl restart telegraf</p>
+#systemctl restart grafana-server</p>
 		<p>
 			Once we are done setting up the components of our server, you will go back and uncomment
 			them in the file, but for now, keep them commented.
@@ -663,39 +662,39 @@ root@meiling:/home/dekarrin# exit</p>
 		</p>
 		<p class="code">[retention]
   # Determines whether retention policy enforcement enabled.
-  enabled = true
+  <b>enabled = true</b>
 
   # The interval of time when retention policy enforcement checks run.
-  check-interval = "30m"</p>
+  <b>check-interval = "30m"</b></p>
   		<p>
 			Under the <span class="code">[http]</span> section, uncomment and set the variables to
 			the values listed. This will enable using InfluxDB over HTTP.
 		</p>
 		<p class="code">[http]
   # Determines whether HTTP endpoint is enabled.
-  enabled = true
+  <b>enabled = true</b>
 
   # The bind address used by the HTTP service.
-  bind-address = ":8086"
+  <b>bind-address = ":8086"</b>
 
   # Determines whether user authentication is enabled over HTTP/HTTPS.
-  auth-enabled = true
+  <b>auth-enabled = true</b>
 
   # The default realm sent back when issuing a basic auth challenge.
-  realm = "InfluxDB"</p>
+  <b>realm = "InfluxDB"</b></p>
   		<p>
 			Also in the <span class="code">[http]</span> section, uncomment and set the variables to
 			the correct values to enable HTTPS encryption/authentication. Be sure to change the
 			domain name in the examples to match your instance's domain name.
 		</p>
 		<p class="code">  # Determines whether HTTPS is enabled.
-  https-enabled = true
+  <b>https-enabled = true</b>
 
   # The SSL certificate to use when HTTPS is enabled.
-  https-certificate = "/etc/letsencrypt/live/meiling.example.com/fullchain.pem"
+  <b>https-certificate = "/etc/letsencrypt/live/meiling.example.com/fullchain.pem"</b>
 
   # Use a separate private key location.
-  https-private-key = "/etc/letsencrypt/live/meiling.example.com/privkey.pem"</p>
+  <b>https-private-key = "/etc/letsencrypt/live/meiling.example.com/privkey.pem"</b></p>
 		<p>
 			In the <span class="code">[subscriber]</span> section, uncomment and set 'enabled' to
 			false. The subscription settings are used by Kapacitor, a front-end offering by
@@ -704,7 +703,7 @@ root@meiling:/home/dekarrin# exit</p>
 		</p>
 		<p class="code">[subscriber]
   # Determines whether the subscriber service is enabled.
-  enabled = false</p>
+  <b>enabled = false</b></p>
 		<p>
 			All other values can be left to their defualts.
 		</p>
@@ -733,8 +732,7 @@ root@meiling:/home/dekarrin# exit</p>
 		<p class="code">  chmod 654 "$RENEWED_LINEAGE/$x"
 done
 <b>systemctl restart influxdb</b>
-#systemctl restart grafana-server
-#systemctl restart telegraf</p>
+#systemctl restart grafana-server</p>
 		<h3 id="influxdb-setup">Set Up Database and InfluxDB Users</h3>
 		<p>
 			Now that InfluxDB has been installed and started, you will need to connect to it and set
@@ -976,7 +974,78 @@ Feb 17 23:52:03 meiling /usr/local/bin/pytelhttp[8168]: Sleep for 119.28270 seco
 			compromised, take steps to fix it quickly.</span>
 		</p>
 		<h2 id="grafana">Setting Up Grafana</h2>
+		<p>
+			Now we've got multiple data sources feeding into a high-performance storage backend.
+			Next up is getting a way to view all that data. Grafana is a front-end application
+			designed to work with metric storage systems. It can display graphs/charts/metrics in
+			easy-to-read dashboards.
+		</p>
 		<h3 id="grafana-install">Install Grafana</h3>
+		<p>
+			Add the repository PPA to the package manager:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo su
+root@meiling:/home/dekarrin# echo "deb https://packagecloud.io/grafana/stable/debian/ jessie main" >> /etc/apt/sources.list
+root@meiling:/home/dekarrin# curl https://packagecloud.io/gpg.key | sudo apt-key add -
+root@meiling:/home/dekarrin# exit</p>
+		<p>
+			Next, update the package lists:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo apt-get update</p>
+		<p>
+			And install Grafana:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo apt-get install grafana</p>
+		<p>
+			Next, we need to do some basic config of the Grafana server. Most of the set up can be
+			done via the web UI, but we'll want to set up server connection security first. Go ahead
+			and open the Grafana configuration file:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo nano /etc/grafana/grafana.ini</p>
+		<p>
+			In the <span class="code">[server]</span> section, uncomment and set the variables
+			<span class="literal">protocol</span> to <span class="literal">https</span>,
+			<span class="literal">http_port</span> to <span class="literal">443</span>,
+			<span class="literal">cert_file</span> to <span class="literal">/etc/letsencrypt/live/meiling.example.com/fullchain.pem</span>,
+			and <span class="literal">cert_key</span> to <span class="literal">/etc/letsencrypt/live/meiling.example.com/privkey.pem</span>,
+			making sure to replace the domain names with your instance's actual domain name. This
+			will enable HTTPS for Grafana, and will tell it to only use HTTPS to serve content.
+		</p>
+		<p class="code">[server]
+# Protocol (http, https, socket)
+<b>protocol = https</b>
+
+# The ip address to bind to, empty will bind to all interfaces
+;http_addr =
+
+# The http port  to use
+<b>http_port = 443</b>
+
+...
+
+# https certs & key file
+<b>cert_file = /etc/letsencrypt/live/meiling.dekarrin.com/fullchain.pem</b>
+<b>cert_key = /etc/letsencrypt/live/meiling.dekarrin.com/privkey.pem</b></p>
+		<p>
+			In the <span class="code">[security]</span> section, uncomment and set
+			<span class="literal">secret_key</span> to a random 20-character string of mixed-case
+			letters and numbers. This will add an additional layer of security by changing the
+			cookie signing key from the default.
+		</p>
+		<p class="code">[security]
+# default admin user, created on startup
+;admin_user = admin
+
+# default admin password, can be changed before first start of grafana,  or in profile settings
+;admin_password = admin
+
+# used for signing
+</b>secret_key = tHe20CharacterStrINg</b></p>
+		<p>
+			That's it for file-based configuration. Next, add the Grafana user to the ssl-cert group
+			so it's able to access the SSL/TLS certificates:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo usermod -a -G ssl-cert grafana
 		<h3 id="grafana-charts">Create Charts</h3>
 		<h2 id="whats-next">Where To Go From Here</h2>
 		<h3 id="alerting">Alerting</h3>
