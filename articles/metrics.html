@@ -22,7 +22,7 @@
 		<p>
 			This tutorial is a step-by-step process for the setup of a system for monitoring the
 			Hentai@Home client using graphs and automated alerts. It uses the Grafana web
-			application to show charts of the client’s performance and hath generation, Telegraf to
+			application to show charts of the client's performance and hath generation, Telegraf to
 			both collect information from the host machines of the H@H clients as well as to collect
 			information on the Hath network performance from the main Hentai@Home website, and
 			InfluxDB as the metric storage backend. DigitalOcean is used to host these services on a
@@ -95,7 +95,7 @@
 		<ul>
 			<li><b>At least one Hentai@Home client that is already running and is actively
 				contributing to the hath network.</b> This guide will not be very helpful if you
-				don’t already have a running client; go to
+				don't already have a running client; go to
 				<a href="https://e-hentai.org/hentaiathome.php">the H@H info page</a> for info on
 				running a client. Actually setting up the client is beyond the scope of this guide;
 				please refer to the link and/or contact Tenboro on the forums for help with the
@@ -115,18 +115,18 @@
 		<p>
 			You will need a place for Grafana, InfluxDB, and the hath network metrics collection
 			daemon to live. I recommend that this be separate from any box that is hosting a H@H
-			client, because if it isn’t and that box goes down, you will get zero notifications that
-			your client went down. For the same reason, it’s a good idea to have it hosted on a
+			client, because if it isn't and that box goes down, you will get zero notifications that
+			your client went down. For the same reason, it's a good idea to have it hosted on a
 			different network than the one that your H@H clients are on.
 		</p>
 		<p>
 			You will need a server that is connected to the internet and that you have full root
 			access on. Additionally, you will probably want a server with reliable uptime. You do
-			not need a very beefy machine; I’ve found that a box with 512MB of RAM and 20GB of disk
+			not need a very beefy machine; I've found that a box with 512MB of RAM and 20GB of disk
 			space is perfectly sufficient for my current needs.
 		</p>
 		<p>
-			The quick and easy ways to get a server with good uptime that you don’t have to worry
+			The quick and easy ways to get a server with good uptime that you don't have to worry
 			about maintaining yourself are to get an instance on an Infrastructure-as-a-Service
 			system or to get a Virtual Private Server. VPSs tend to be a little on the slower side
 			at smaller scale, do not often offer easy scaling options (not that this is a concern
@@ -152,17 +152,17 @@
 			platforms, you will not be charged until the billing period has ended.
 		</p>
 		<p>
-			The way we will be setting up the server infrastructure, it is extremely unlikely that
+			The way you will be setting up the server infrastructure, it is extremely unlikely that
 			you will be charged anything above $5 per month, but as with other IaaS platforms, you
 			are billed based on usage, so it might be a good to set up a "Billing Alert" on the
 			off-chance that something is inadvertently changed which causes you to be billed more
 			than you would like. I set my alert to ping me if my bill ever exceeds $10 to be on the
 			safe side. To configure this, head over to your account settings, go under "Billing",
-			and scroll down to "Billing Alerts" to set a threshold for you to be warned at. Don’t
+			and scroll down to "Billing Alerts" to set a threshold for you to be warned at. Don't
 			forget to save!
 		</p>
 		<p>
-			Okay cool, now let’s actually create an instance. Hit the green Create button at the top
+			Okay cool, now let's actually create an instance. Hit the green Create button at the top
 			right corner of the page and select "Droplets" (or just go to
 			<a href="https://cloud.digitalocean.com/droplets/new">https://cloud.digitalocean.com/droplets/new</a>).
 		</p>
@@ -183,26 +183,26 @@
 		</p>
 		<p>
 			Block Storage / Volumes are only necessary if you find you need more space on your
-			droplet, but will cost you more. You really don’t need it; 25 GB is fine to start with
+			droplet, but will cost you more. You really don't need it; 25 GB is fine to start with
 			and you can always add volumes to your instance later.
 		</p>
 		<p>
-			For the data center, pick whatever you want. At the the scale that we are dealing with
-			here it really doesn’t matter. If I had to make a recommendation, I’d say pick a
+			For the data center, pick whatever you want. At the the scale that you are dealing with
+			here it really doesn't matter. If I had to make a recommendation, I'd say pick a
 			location that is closest to you for general use, as it might be miniscule fractions of a
 			second faster. All of the data centers are just fine, though note that some features
 			(such as block storage) are limited to particular data centers.
 		</p>
 		<p>
 			For "additional options", check whatever makes sense to you. I have my box set up with
-			IPv6 and Monitoring. It’s also a good idea to add weekly Backups. This will cause your
+			IPv6 and Monitoring. It's also a good idea to add weekly Backups. This will cause your
 			bill to be a little higher (20% higher as of the time of this writing), but it is well
 			worth it to ensure your data is not lost in the event of catastrophic system failure.
 		</p>
 		<p>
 			Setting up an SSH key during droplet set up is not a requirement, but it will make it so
-			that the initial root password does not have to be sent to you over email. If you aren’t
-			already familiar with using SSH keys to authenticate to remote servers, don’t worry
+			that the initial root password does not have to be sent to you over email. If you aren't
+			already familiar with using SSH keys to authenticate to remote servers, don't worry
 			about it, though I recommend you get familiar with them at some point as they will make
 			your dev-ops life easier.
 		</p>
@@ -211,10 +211,10 @@
 			want, you can stay with the default name which is based on the droplet profile, but I
 			find it makes it much easier to give it a more meaningful name. Many admins give the
 			hosts names based on the application running on the server; I give my hosts names based
-			on anime characters. For my server infrastructure, I use Touhou characters such as "sakuya",
-			"flandre", "patchouli", etc. No matter what, in order to make your life easier, make
-			sure to use only lower-case characters and dashes; this will also make it so your domain
-			names can be the same as your host names. For the purposes of this guide, I’m going to
+			on anime characters. For my server infrastructure, I use Touhou characters such as
+			"flandre", or "patchouli". No matter what, in order to make your life easier, make sure
+			to use only lower-case characters and dashes; this will also make it so your domain
+			names can be the same as your hostnames. For the purposes of this guide, I'm going to
 			call mine "meiling".
 		</p>
 		<p>
@@ -227,15 +227,15 @@
 			<p>List of droplets. When you've created yours, it will be in this list.<p>
 		</div>
 		<p>
-			Before we log in for the first time, we’ll secure the droplet by setting up a cloud
-			firewall, and we will set up a domain name for the host and put it on a subdomain so we
-			can access it via name instead of via IP address.
+			Before you log in for the first time, you'll secure the droplet by setting up a cloud
+			firewall, and you will set up a domain name for the host and put it on a subdomain so
+			you can access it via name instead of via IP address.
 		</p>
 		<h3 id="lock-down">Lock Down Instance with Firewall/Security Group</h3>
 		<p>
 			On DigitalOcean, new droplets are open to the internet on all ports. This is not the
-			greatest idea; we will want to close all ports that are not necessary for operation. To
-			do this, we will create a "Cloud Firewall" (also known as a "Security Group" on some
+			greatest idea; you will want to close all ports that are not necessary for operation. To
+			do this, you will create a "Cloud Firewall" (also known as a "Security Group" on some
 			IaaS platforms).
 		</p>
 		<p>
@@ -270,20 +270,20 @@
 		<p>
 			Finally, hit the "Create Firewall" button to save the firewall and apply it to your
 			instance. Now, traffic on other ports will not be allowed through, and your box is
-			slightly more secure. I mean don’t go around bragging about it, this is super basic
-			security. But at least it won’t ever listen to traffic on other ports if someone happens
+			slightly more secure. I mean don't go around bragging about it, this is super basic
+			security. But at least it won't ever listen to traffic on other ports if someone happens
 			to install malicious server software on the box.
 		</p>
 		<p>
-			Next, we’ll configure domain name records so you can access your box with a nice
+			Next, you'll configure domain name records so you can access your box with a nice
 			internet address instead of a bunch of mean-looking numbers.
 		</p>
 		<h3 id="dns">Create Domain Name Records</h3>
 		<p>
 			This section has information on moving a domain name over to DigitalOcean for use with
 			your droplets and then using DigitalOcean to assign a subdomain to your droplet. If you
-			don’t yet own a domain name, head over to Namecheap or wherever you want to pick one up.
-			They run from about $10 to $30 per year depending on the ending; .com’s are about $11
+			don't yet own a domain name, head over to Namecheap or wherever you want to pick one up.
+			They run from about $10 to $30 per year depending on the ending; .com's are about $11
 			per year. If you will not be setting up a domain name or you already have one set up,
 			feel free to skip down to <a href="#basic-setup">Basic Server Setup</a> to start
 			administrating your server immediately.
@@ -296,18 +296,18 @@
 		<p>
 			Once the nameservers have been properly updated, head over to the Networking tab of the
 			DigitalOcean control panel. You should see your domain name in the list there; if you
-			don’t, go ahead and add the raw (without anything before it, including www) domain name.
+			don't, go ahead and add the raw (without anything before it, including www) domain name.
 			For example, if I were to own the domain "example.com". I would enter that exactly
-			(without the quotes). Don’t actually use example.com, use whatever domain name you own.
+			(without the quotes). Don't actually use example.com, use whatever domain name you own.
 		</p>
 		<p>
-			Next, we will add some DNS records to point at your server. Click on your domain in the
+			Next, you will add some DNS records to point at your server. Click on your domain in the
 			list and you should see the "Create New Record" interface. Go to the "A" tab to create a
-			new A-record; this will point the domain name to your droplet’s IPv4 address.
+			new A-record; this will point the domain name to your droplet's IPv4 address.
 		</p>
 		<p>
-			We’ll be using a subdomain, which is the part in the address that comes before the
-			domain we purchased. For example, in "www.example.com", "example.com" would be the
+			You'll be using a subdomain, which is the part in the address that comes before the
+			domain you purchased. For example, in "www.example.com", "example.com" would be the
 			domain name and "www" would be the subdomain. Enter something memorable; it usually
 			makes sense to just call it the same as whatever hostname you assigned to the droplet
 			during creation. Enter the subdomain in the "Hostname" field (for the instance I created
@@ -325,34 +325,34 @@
 			process with the same information.
 		</p>
 		<p>
-			That’s it! Your instance is now accessible by a human-readable internet address rather
-			than a spoopy scary-skeletons set of numbers. But, note that you won’t get anything yet
-			if you try to go there in a web browser; we still need to set up the server.
+			That's it! Your instance is now accessible by a human-readable internet address rather
+			than a spoopy scary-skeletons set of numbers. But, note that you won't get anything yet
+			if you try to go there in a web browser; you still need to set up the server.
 		</p>
 		<p>
 			Grab your root password from your email, pull up a terminal (or PuTTY if you are on
-			Windows), and SSH to root@your-internet-address-that-you-just-set-up, and you’ll be in
-			business! If all has gone well, you’ll be presented with a terminal prompt on your new
+			Windows), and SSH to root@your-internet-address-that-you-just-set-up, and you'll be in
+			business! If all has gone well, you'll be presented with a terminal prompt on your new
 			box, and will be required to immediately change the root password. Please do so, but
 			note that this will not be your main user if you follow the rest of the guide.
 		</p>
 		<p>
-			Now it’s time to move on to setting up the server.
+			Now it's time to move on to setting up the server.
 		</p>
 		<h2 id="basic-setup">Basic Server Setup</h2>
 		<p>
-			So, now we’ve got a box somewhere on the internet. Awesome! The next step is to log in
-			to it and start configuring everything. Before we jump to the metrics stack, we’ll need
-			to do some basic server setup first.
+			So, now you've got a box somewhere on the internet. Awesome! The next step is to log in
+			to it and start configuring everything. Before you jump to the metrics stack, you'll
+			need to do some basic server setup first.
 		</p>
 		<p>
-			If you’ve been following the guide so far, you won’t yet have any users set up, so log
-			into your instance as the user ‘root’ (root@your-box-address).
+			If you've been following the guide so far, you won't yet have any users set up, so log
+			into your instance as the user ‘root' (root@your-box-address).
 		</p>
 		<h3 id="basic-utils">Install Basic Utilities</h3>
 		<p>
-			First, as soon as you’re logged in, make sure all of the existing software is up to
-			date. If your instance’s distro is Ubuntu or another Debian-like, follow the
+			First, as soon as you're logged in, make sure all of the existing software is up to
+			date. If your instance's distro is Ubuntu or another Debian-like, follow the
 			instructions in this guide; otherwise, do whatever the equivalent for your distro is. If
 			your instance is running on a non-Linux OS, god help you.
 		</p>
@@ -373,11 +373,11 @@
 		</p>
 		<p class="code">root@meiling:~# apt-get autoremove</p>
 		<p>
-			Next, we’ll install some programs that will make life easier on this system.
+			Next, you'll install some programs that will make life easier on this system.
 		</p>
 		<p>
 			If you do not have 'sudo' on your system, install it now. You can test whether you have
-			sudo by trying to use it. If you don’t have it, you will see the following:
+			sudo by trying to use it. If you don't have it, you will see the following:
 		</p>
 		<p class="code">sudo: command not found</p>
 		<p>
@@ -385,7 +385,7 @@
 		</p>
 		<p class="code">root@meiling:~# apt-get install sudo</p>
 		<p>
-			Next, you’ll want a text editor. For simplicity’s sake, this guide will use the ‘nano'
+			Next, you'll want a text editor. For simplicity's sake, this guide will use the ‘nano'
 			editor, but if you prefer, you can install vim, emacs, or whatever you want.
 		</p>
 		<p class="code">root@meiling:~# apt-get install nano</p>
@@ -393,32 +393,32 @@
 			In all likelihood, it will already be installed.
 		</p>
 		<p>
-			That’s it for initial software and set up! If you would like, I’d also recommend
+			That's it for initial software and set up! If you would like, I'd also recommend
 			installing `screen` or `tmux` so you can keep your session open even if you lose your
-			connection while you are SSH’d into your box, but it is by no means necessary. Next,
-			we’ll move on to creating a user for yourself.
+			connection while you are SSH'd into your box, but it is by no means necessary. Next,
+			you'll move on to creating a user for yourself.
 		</p>
 		<h3 id="users-and-groups">Create Users and Groups</h3>
 		<p>
 			Right now, you are logged into your system as the root user. This is generally not a
 			good idea, because the root user is unrestricted and if it were compromised, the
 			attacker would have full system access. You really only need to be logged in as root in
-			special circumstances; for general use, you’ll want to create a new user for yourself on
-			your box that can only perform restricted, ‘regular’ actions. We’ll also set it up so
-			the user can elevate its permissions temporarily as needed with the ‘sudo’ command.
+			special circumstances; for general use, you'll want to create a new user for yourself on
+			your box that can only perform restricted, ‘regular' actions. You'll also set it up so
+			the user can elevate its permissions temporarily as needed with the ‘sudo' command.
 		</p>
 		<p>
 			First, create the new user for yourself. For the username, pick something that is easy
-			to remember. It doesn’t have to be secret; for me personally, I just use ‘dekarrin’.
+			to remember. It doesn't have to be secret; for me personally, I just use ‘dekarrin'.
 			Another common method of creating usernames is just your initials; for me, this would be
-			‘rcn’, for Richard Stallman, it would be ‘rms’. No matter what, unless you want your
-			life to be difficult, make sure it’s all lowercase and has no punctuation, and create
+			‘rcn', for Richard Stallman, it would be ‘rms'. No matter what, unless you want your
+			life to be difficult, make sure it's all lowercase and has no punctuation, and create
 			the user.
 		</p>
 		<p class="code">root@meiling:~# adduser dekarrin</p>
 		<p>
 			You will prompted to set a password for the new user. <span class="warning">SET IT TO
-			SOMETHING OTHER THAN THE ROOT PASSWORD.</span> If you don’t, setting up the additional
+			SOMETHING OTHER THAN THE ROOT PASSWORD.</span> If you don't, setting up the additional
 			user is completely pointless.
 		</p>
 		<p>
@@ -432,11 +432,11 @@
 		<p class="code">root@meiling:~# id dekarrin
 uid=1000(dekarrin) gid=1000(dekarrin) groups=1000(dekarrin)</p>
 		<p>
-			If you see <span class="code">id: ‘dekarrin’: no such user</span>, then the user has not
-			been set up properly, and you’ll need to try again.
+			If you see <span class="code">id: ‘dekarrin': no such user</span>, then the user has not
+			been set up properly, and you'll need to try again.
 		</p>
 		<p>
-			Next, add your user to the supplementary group ‘sudo’ to allow it to run the sudo
+			Next, add your user to the supplementary group ‘sudo' to allow it to run the sudo
 			command. The sudo command is used for performing privileged action as an unprivileged
 			user; it is very necessary unless you want to be switching to the root user every time
 			you need to do system config.
@@ -449,11 +449,11 @@ uid=1000(dekarrin) gid=1000(dekarrin) groups=1000(dekarrin)</p>
 		<p class="code">root@meiling:~# id dekarrin
 uid=1000(dekarrin) gid=1000(dekarrin) groups=1000(dekarrin),27(sudo)</p>
 		<p>
-			Now, you need to make sure that the ‘sudo’ group is authorized to execute sudo. This
-			will be in the ‘sudoers’ configuration file. The exact location may vary by distro, but
-			that file should not be modified directly anyways. Instead, we will use the ‘visudo’
-			command, which will allow us to edit the config with nano, and once we are done, it will
-			make sure that the edited contents are valid before using it.
+			Now, you need to make sure that the ‘sudo' group is authorized to execute sudo. This
+			will be in the ‘sudoers' configuration file. The exact location may vary by distro, but
+			that file should not be modified directly anyways. Instead, you will use the ‘visudo'
+			command, which will allow us to edit the config with nano, and once you are done, it
+			will make sure that the edited contents are valid before using it.
 		</p>
 		<p class="code">root@meiling:~# visudo</p>
 		<p>
@@ -461,18 +461,18 @@ uid=1000(dekarrin) gid=1000(dekarrin) groups=1000(dekarrin),27(sudo)</p>
 			<span class="code">%sudo   ALL=(ALL:ALL) ALL</span> exists somewhere in the file.
 		</p>
 		<p>
-			If it exists, but has a hash character in front of it (‘#’), remove the hash character.
+			If it exists, but has a hash character in front of it (‘#'), remove the hash character.
 			If the line does not exist, scroll to the bottom of the file and add it.
 		</p>
 		<p>
-			When done, use the keyboard command given on the bottom of the screen to ‘Write-out’
-			(save) the file. The ‘^’ character in the shortcuts refers to the ‘Control’ key. The
+			When done, use the keyboard command given on the bottom of the screen to ‘Write-out'
+			(save) the file. The ‘^' character in the shortcuts refers to the ‘Control' key. The
 			command for writing out in nano is ^O (Control-O). Hit it and you will then be prompted
 			to give a name for the file. Leave it as the default and hit enter, then do ^X to exit
 			from nano.
 		</p>
 		<p>
-			Now, your new user is set up and can use sudo. Log out of the instance with ‘exit’, and
+			Now, your new user is set up and can use sudo. Log out of the instance with ‘exit', and
 			log back in as your new user ("yournewuser@yourserver").
 		</p>
 		<p class="code">root@meiling:~# exit
@@ -490,9 +490,9 @@ dekarrin@meiling:~$</p>
 test
 dekarrin@meiling:~$</p
 		<p>
-			Depending on the distro, it’s possible that the first time you use sudo, you will be
+			Depending on the distro, it's possible that the first time you use sudo, you will be
 			presented with a prompt that asks you to accept the responsibility of being able to use
-			the sudo command. That’s fine, accept the prompt.
+			the sudo command. That's fine, accept the prompt.
 		</p>
 		<p>
 			From now on, it is a good idea to never log in as the root user except in emergencies.
@@ -602,8 +602,8 @@ done
 #systemctl restart influxdb
 #systemctl restart grafana-server</p>
 		<p>
-			Once we are done setting up the components of our server, you will go back and uncomment
-			them in the file, but for now, keep them commented.
+			Once you are done setting up the components of our server, you will go back and
+			uncomment them in the file, but for now, keep them commented.
 		</p>
 		<p>
 			Give the script execution permission so that Certbot can run it.
@@ -642,7 +642,7 @@ root@meiling:/home/dekarrin# exit</p>
 		</p>
 		<p class="code">dekarrin@meiling:~$ sudo apt-get install influxdb</p>
 		<p>
-			Before starting up InfluxDB, we need to modify the configuration settings. Open the
+			Before starting up InfluxDB, you need to modify the configuration settings. Open the
 			config file as root:
 		</p>
 		<p class="code">dekarrin@meiling:~$ sudo nano /etc/influxdb/influxdb.conf</p>
@@ -990,7 +990,7 @@ Feb 17 23:52:03 meiling /usr/local/bin/pytelhttp[8168]: Sleep for 119.28270 seco
 		</p>
 		<h2 id="grafana">Setting Up Grafana</h2>
 		<p>
-			Now we've got multiple data sources feeding into a high-performance storage backend.
+			Now you've got multiple data sources feeding into a high-performance storage backend.
 			Next up is getting a way to view all that data. Grafana is a front-end application
 			designed to work with metric storage systems. It can display graphs/charts/metrics in
 			easy-to-read dashboards.
@@ -1012,8 +1012,8 @@ root@meiling:/home/dekarrin# exit</p>
 		</p>
 		<p class="code">dekarrin@meiling:~$ sudo apt-get install grafana</p>
 		<p>
-			Next, we need to do some basic config of the Grafana server. Most of the set up can be
-			done via the web UI, but we'll want to set up server connection security first. Go ahead
+			Next, you need to do some basic config of the Grafana server. Most of the set up can be
+			done via the web UI, but you'll want to set up server connection security first. Go ahead
 			and open the Grafana configuration file:
 		</p>
 		<p class="code">dekarrin@meiling:~$ sudo nano /etc/grafana/grafana.ini</p>
