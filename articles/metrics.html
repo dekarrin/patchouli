@@ -930,7 +930,51 @@ To start, do `systemctl start pytelegrafhttp`</p>
 			<a href="../supplementary/pytelegrafhttp-config.py">example PyTelegrafHTTP config</a>
 			into the real config file at <span class="code">/etc/pytelegrafhttp/config.py</span>.
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo nano /etc/pytelegrafhttp/config.py</p
+		<p class="code">dekarrin@meiling:~$ sudo nano /etc/pytelegrafhttp/config.py</p>
+		<p>
+			Make sure to update the scraper_username and scraper_password variables with your actual
+			E-hentai credentials. Because these are stored in this file, make sure that the
+			permissions on the file are such that only root can read it.
+		</p>
+		<p>
+			Once the config file is updated, start PyTelegrafHTTP:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo systemctl start pytelegrafhttp</p>
+		<p>
+			Give it about 60 seconds to log in, and then verify that is running:
+		</p>
+		<p class="code">dekarrin@meiling:/etc/pytelegrafhttp$ sudo systemctl status pytelegrafhttp
+● pytelegrafhttp.service - Pytelegrafhttp is a scraper for metrics from HTTP pages
+   Loaded: loaded (/etc/pytelegrafhttp/pytelegrafhttp.service; linked; vendor preset: enabled)
+   Active: active (running) since Sat 2018-02-17 23:51:48 UTC; 55s ago
+     Docs: https://github.com/dekarrin/pytelegrafhttp/
+ Main PID: 8168 (pytelhttp)
+    Tasks: 1
+   Memory: 34.1M
+      CPU: 846ms
+   CGroup: /system.slice/pytelegrafhttp.service
+           └─8168 /usr/bin/python3 /usr/local/bin/pytelhttp start --config /etc/pytelegrafhttp/config.py
+
+Feb 17 23:52:02 meiling /usr/local/bin/pytelhttp[8168]: Headers: {'User-Agent': 'Mozilla/5.0', 'Accept-En
+Feb 17 23:52:02 meiling /usr/local/bin/pytelhttp[8168]: Body: None
+Feb 17 23:52:02 meiling /usr/local/bin/pytelhttp[8168]: Received response: HTTP 200
+Feb 17 23:52:02 meiling /usr/local/bin/pytelhttp[8168]: Headers: {'X-Varnish': '221597470', 'Content-Leng
+Feb 17 23:52:02 meiling /usr/local/bin/pytelhttp[8168]: Body: b'&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML
+Feb 17 23:52:03 meiling /usr/local/bin/pytelhttp[8168]: metric 5 (hath_health) for endpoint + '/hentaiath
+Feb 17 23:52:03 meiling pytelhttp[8168]: WARNING: metric 5 (hath_health) for endpoint + '/hentaiathome.ph
+Feb 17 23:52:03 meiling /usr/local/bin/pytelhttp[8168]: Got metrics for /hentaiathome.php; sending...
+Feb 17 23:52:03 meiling pytelhttp[8168]: Got metrics for /hentaiathome.php; sending...
+Feb 17 23:52:03 meiling /usr/local/bin/pytelhttp[8168]: Sleep for 119.28270 seconds</p>
+		<p>
+			If everything looks good, the PyTelegrafHTTP is now installed and is relaying metrics.
+		</p>
+		<p>
+			Security notice: even though great care is taken to set the
+			permissions properly on the logs and config file, your password and username is exposed
+			in both of these. <span class="warning">If your server is compromised, your e-hentai
+			account will be compromised as well. Be aware of your server status, and if it is
+			compromised, take steps to fix it quickly.</span>
+		</p>
 		<h2 id="grafana">Setting Up Grafana</h2>
 		<h3 id="grafana-install">Install Grafana</h3>
 		<h3 id="grafana-charts">Create Charts</h3>
