@@ -966,10 +966,14 @@ Feb 17 23:52:03 meiling pytelhttp[8168]: Got metrics for /hentaiathome.php; send
 Feb 17 23:52:03 meiling /usr/local/bin/pytelhttp[8168]: Sleep for 119.28270 seconds</p>
 		<p>
 			Security notice: even though great care is taken to set the
-			permissions properly on the logs and config file, your password and username is exposed
-			in both of these. <span class="warning">If your server is compromised, your e-hentai
+			permissions properly on the config file, your password and username is exposed in it.
+			<span class="warning">If your server is compromised, your e-hentai
 			account will be compromised as well. Be aware of your server status, and if it is
-			compromised, take steps to fix it quickly.</span>
+			compromised, take steps to fix it quickly.</span> For maximum security, you can edit the
+			config file after PyTelegrafHTTP has already started and remove your account password,
+			but be aware that you will need to re-add it if PyTelegrafHTTP is ever restarted, and
+			that PyTelegrafHTTP will no longer be able to automatically start itself if your
+			instance is restarted.
 		</p>
 		<p>
 			Now that PyTelegrafHTTP is installed, you'll want to double-check that Telegraf is
