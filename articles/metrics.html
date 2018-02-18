@@ -1236,9 +1236,44 @@ root@meiling:/home/dekarrin# exit</p>
 			+ total_clients)</span>, replacing total_clients with the number of clients you have.
 		</p>
 		<h2 id="whats-next">Where To Go From Here</h2>
+		<p>
+			If you've been following this guide, you will now have a full suite of metrics and
+			monitoring for your H@H clients. There are a few other things beyond the scope of this
+			guide that it could be useful to pursue.
+		</p>
 		<h3 id="alerting">Alerting</h3>
+		<p>
+			Grafana can be set up to send out an Alert whenever a value on a panel passes a certain
+			threshold. To setup an alert, go to any panel, click Edit, and go to the Alerts tab.
+		</p>
+		<p>
+			For more information on Alerting, see the
+			<a href="http://docs.grafana.org/alerting/rules/">guide by GrafanaLabs</a>, which gives
+			a full introduction to the alerting system.
+		</p>
 		<h3 id="ifttt">Using IFTTT for Phone Notifications</h3>
+		<p>
+			If-this-then-that (IFTTT) is a generic service for creating online mini-apps that react
+			to certain actions. By creating a Grafana notification channel that POSTs to a Maker
+			endpoint, IFTTT can receive the event and perform an action, such as alerting the phone
+			app. IFTTT uses the WebHooks service to receive the events.
+		</p>
+		<p>
+			Actually getting the IFTTT service set up is beyond the scope of this guide, but
+			hopefully this information is enough to get started with it.
+		</p>
 		<h3 id="backups">Backups</h3>
+		<p>
+			If you did not yet set up automatic backups on your DigitalOcean instance, I very much
+			recommend that you find some other method for doing so. If you don't back up your data,
+			you are at risk for losing all of it.
+		</p>
+		<p>
+			The data in InfluxDB is the only information on the server that cannot be reproduced
+			if the server gets trashed. Back up this data is the highest priority over everything
+			else. For information on backing up InfluxDB, see the
+			<a href="https://docs.influxdata.com/influxdb/v1.4/administration/backup_and_restore/">guide by InfluxData</a>.
+		</p>
 	</main>
 	<p class="backlink">
 		<a href="../"><img src="../patchoulismall.png" width="20px">Back to Archive</a>
