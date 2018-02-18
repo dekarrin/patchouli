@@ -876,14 +876,15 @@ root@meiling:/home/dekarrin# exit</p>
 			properties and set them to the password of the "hath_netstats" user.
 		</p>
 		<p>
-			Start up Telegraf and ensure it is running:
+			Start up Telegraf (with restart to ensure configuration is loaded) and ensure it is
+			running:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo systemctl start telegraf
+		<p class="code">dekarrin@meiling:~$ sudo systemctl restart telegraf
 dekarrin@meiling:~$ systemctl status telegraf
 ● telegraf.service - The plugin-driven server agent for reporting metrics into InfluxDB
    Loaded: loaded (/lib/systemd/system/telegraf.service; enabled; vendor preset: enabled)
    Active: active (running) since Sat 2018-02-17 22:48:36 UTC; 15min ago</p>
-   		<p>
+		<p>
 			Telegraf has now been installed; now you need to install the scraper tool to get the
 			metrics from the E-Hentai server.
 		</p>
@@ -964,14 +965,32 @@ Feb 17 23:52:03 meiling /usr/local/bin/pytelhttp[8168]: Got metrics for /hentaia
 Feb 17 23:52:03 meiling pytelhttp[8168]: Got metrics for /hentaiathome.php; sending...
 Feb 17 23:52:03 meiling /usr/local/bin/pytelhttp[8168]: Sleep for 119.28270 seconds</p>
 		<p>
-			If everything looks good, the PyTelegrafHTTP is now installed and is relaying metrics.
-		</p>
-		<p>
 			Security notice: even though great care is taken to set the
 			permissions properly on the logs and config file, your password and username is exposed
 			in both of these. <span class="warning">If your server is compromised, your e-hentai
 			account will be compromised as well. Be aware of your server status, and if it is
 			compromised, take steps to fix it quickly.</span>
+		</p>
+		<p>
+			Now that PyTelegrafHTTP is installed, you'll want to double-check that Telegraf is
+			properly relaying the metrics from it. Wait about 2 minutes and check the status of
+			Telegraf once again, as sudo to make sure you can see the journal log as well.
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo systemctl status telegraf</p>
+		<p>
+			It should look very similar to the status it had right after it started, since Telegraf
+			does not log regular behavior. If you see problems along the lines of
+			<span class="code">Error writing to output [influxdb]: Could not write to any InfluxDB server in cluster</span>,
+			it's possible your configuration changes were not picked up. In this case, restarting
+			the service should cause the configuration to be reloaded:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo systemctl restart telegraf</p>
+		<p>
+			And then try checking the status again after another 2 minutes.
+		</p>
+		<p>
+			If everything is good up to this point, the PyTelegrafHTTP daemon is now
+			installed and is relaying metrics via Telegraf.
 		</p>
 		<h2 id="grafana">Setting Up Grafana</h2>
 		<p>
@@ -1045,7 +1064,8 @@ root@meiling:/home/dekarrin# exit</p>
 			That's it for file-based configuration. Next, add the Grafana user to the ssl-cert group
 			so it's able to access the SSL/TLS certificates:
 		</p>
-		<p class="code">dekarrin@meiling:~$ sudo usermod -a -G ssl-cert grafana
+		<p class="code">dekarrin@meiling:~$ sudo usermod -a -G ssl-cert grafana</p>
+
 		<h3 id="grafana-charts">Create Charts</h3>
 		<h2 id="whats-next">Where To Go From Here</h2>
 		<h3 id="alerting">Alerting</h3>
