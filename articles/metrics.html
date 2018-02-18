@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>Metrics for H@H Client :: Patchouli Documentation</title>
-	<link rel="stylesheet" type="text/css" href="../styles.css" />
+	<link rel="stylesheet" type="text/css" href="/styles.css" />
 	<meta charset="UTF-8" />
 	<meta name="description" content="Setting up a metrics stack for H@H." />
 	<meta name="author" content="Rebecca C. Nelson" />
@@ -13,7 +13,7 @@
 </head>
 <body>
 	<p class="backlink">
-		<a href="../"><img src="../patchoulismall.png" width="20px">Back to Archive</a>
+		<a href="/"><img src="/patchoulismall.png" width="20px">Back to Archive</a>
 	</p>
 	<main class="article">
 		<h1>Metrics for H@H Client</h1>
@@ -30,7 +30,7 @@
 			client downtime.
 		</p>
 		<div class="captioned-image">
-			<img src="../images/metrics/example-chart.png" width="700px" alt="Example Chart">
+			<img src="/images/metrics/example-chart.png" width="700px" alt="Example Chart">
 			<p>An example of one of the charts that this tutorial will help to set up.<p>
 		</div>
 		<p>
@@ -225,7 +225,7 @@
 			IPv6 address if you had selected it).
 		</p>
 		<div class="captioned-image">
-			<img src="../images/metrics/digitalocean-droplets.png" width="700px" alt="droplets view">
+			<img src="/images/metrics/digitalocean-droplets.png" width="700px" alt="droplets view">
 			<p>List of droplets. When you've created yours, it will be in this list.<p>
 		</div>
 		<p>
@@ -824,7 +824,7 @@ InfluxDB shell version: 1.4.2
 			and follow the instructions specific to the system that the hath client is installed on.
 		</p>
 		<p>
-			Then, take the <a href="../sidedocs/metrics/telegraf-hath.txt">sample configuration file</a>
+			Then, take the <a href="/sidedocs/metrics/telegraf-hath.txt">sample configuration file</a>
 			and copy its contents to the telegraf configuration file. On Debian-like Linux distros,
 			this will be at <span class="literal">/etc/telegraf/telegraf.conf</span>.
 		</p>
@@ -885,7 +885,7 @@ InfluxDB shell version: 1.4.2
 		</p>
 		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo apt-get install telegraf</p>
 		<p>
-			Next, take the contents of the <a href="../sidedocs/metrics/telegraf-server.txt">sample server telegraf config file</a>
+			Next, take the contents of the <a href="/sidedocs/metrics/telegraf-server.txt">sample server telegraf config file</a>
 			and copy the contents to /etc/telegraf/telegraf.conf.
 		</p>
 		<p>
@@ -948,7 +948,7 @@ To start, do `systemctl start pytelegrafhttp`</p>
 			Now you will need to edit the config file for PyTelegrafHTTP. An explanation of the
 			config file format is far beyond the scope of this guide; it is a normal python module,
 			but the variables themselves are moderately complex. Instead, copy the contents of the
-			<a href="../sidedocs/metrics/pytelegrafhttp-config.py">example PyTelegrafHTTP config</a>
+			<a href="/sidedocs/metrics/pytelegrafhttp-config.py">example PyTelegrafHTTP config</a>
 			into the real config file at <span class="literal">/etc/pytelegrafhttp/config.py</span>.
 		</p>
 		<p class="code"><span class="con-green-fg">dekarrin@meiling:~$</span> sudo nano /etc/pytelegrafhttp/config.py</p>
@@ -1133,7 +1133,7 @@ systemctl restart influxdb
 			web browser and navigate to your new Grafana instance, at 'https://your.domain.name'!
 		</p>
 		<div class="captioned-image">
-			<img src="../images/metrics/grafana-login.png" width="700px" alt="Grafana Login">
+			<img src="/images/metrics/grafana-login.png" width="700px" alt="Grafana Login">
 			<p>The default Grafana login page for a fresh install.<p>
 		</div>
 		<h3 id="grafana-webconfig">Finish Setup in Webapp</h3>
@@ -1148,7 +1148,7 @@ systemctl restart influxdb
 			Go to your user profile.
 		</p>
 		<div class="captioned-image">
-			<img src="../images/metrics/grafana-profile.png" width="700px" alt="Grafana Profile Menu">
+			<img src="/images/metrics/grafana-profile.png" width="700px" alt="Grafana Profile Menu">
 			<p>Grafana menu to get to profile.<p>
 		</div>
 		<p>
@@ -1188,7 +1188,7 @@ systemctl restart influxdb
 			user <span class="literal">grafana</span>.
 		</p>
 		<div class="captioned-image">
-			<img src="../images/metrics/grafana-datasource-1.png" width="700px" alt="Grafana Datasource">
+			<img src="/images/metrics/grafana-datasource-1.png" width="700px" alt="Grafana Datasource">
 			<p>Settings for first Grafana data source.<p>
 		</div>
 		<p>
@@ -1203,7 +1203,7 @@ systemctl restart influxdb
 			data source.
 		</p>
 		<div class="captioned-image">
-			<img src="../images/metrics/grafana-datasource-2.png" width="700px" alt="Grafana Datasource">
+			<img src="/images/metrics/grafana-datasource-2.png" width="700px" alt="Grafana Datasource">
 			<p>Settings for second Grafana data source.<p>
 		</div>
 		<p>
@@ -1213,7 +1213,7 @@ systemctl restart influxdb
 			<span class="literal">hath_network</span>. Add the new data source.
 		</p>
 		<div class="captioned-image">
-			<img src="../images/metrics/grafana-datasource-3.png" width="700px" alt="Grafana Datasource">
+			<img src="/images/metrics/grafana-datasource-3.png" width="700px" alt="Grafana Datasource">
 			<p>Settings for third Grafana data source.<p>
 		</div>
 		<p>
@@ -1221,7 +1221,7 @@ systemctl restart influxdb
 			listed.
 		</p>
 		<div class="captioned-image">
-			<img src="../images/metrics/grafana-datasources.png" width="700px" alt="Grafana Datasources">
+			<img src="/images/metrics/grafana-datasources.png" width="700px" alt="Grafana Datasources">
 			<p>Three configured Grafana data sources.<p>
 		</div>
 		<p>
@@ -1233,17 +1233,17 @@ systemctl restart influxdb
 			Your metrics stack is now ready. You can now start building dashboards with Grafana. To
 			make it easier to get started right away, I have made some pre-built dashboards
 			available: <ul>
-				<li><a href="../sidedocs/metrics/essentialhealth.json">Essential Health</a></li>
-				<li><a href="../sidedocs/metrics/globalnet.json">Global Hath Network Stats</a></li>
-				<li><a href="../sidedocs/metrics/clienthardware.json">Hath Client Hardware</a></li>
-				<li><a href="../sidedocs/metrics/clientnet.json">Hath Client Network Health</a></li>
+				<li><a href="/sidedocs/metrics/essentialhealth.json">Essential Health</a></li>
+				<li><a href="/sidedocs/metrics/globalnet.json">Global Hath Network Stats</a></li>
+				<li><a href="/sidedocs/metrics/clienthardware.json">Hath Client Hardware</a></li>
+				<li><a href="/sidedocs/metrics/clientnet.json">Hath Client Network Health</a></li>
 			</ul>
 		</p>
 		<p>
 			To import the dashboards, go to the menu and select "Import" under "Dashboards".
 		</p>
 		<div class="captioned-image">
-			<img src="../images/metrics/grafana-import.png" width="700px" alt="Import menu">
+			<img src="/images/metrics/grafana-import.png" width="700px" alt="Import menu">
 			<p>Location of "Import" in Grafana menu.<p>
 		</div>
 		<p>
@@ -1252,7 +1252,7 @@ systemctl restart influxdb
 			the process.
 		</p>
 		<div class="captioned-image">
-			<img src="../images/metrics/grafana-imported-dashboard.png" width="700px" alt="Imported dashboard">
+			<img src="/images/metrics/grafana-imported-dashboard.png" width="700px" alt="Imported dashboard">
 			<p>Example of imported dashboard.<p>
 		</div>
 		<p>
@@ -1319,7 +1319,7 @@ systemctl restart influxdb
 		</p>
 	</main>
 	<p class="backlink">
-		<a href="../"><img src="../patchoulismall.png" width="20px">Back to Archive</a>
+		<a href="/"><img src="/patchoulismall.png" width="20px">Back to Archive</a>
 	</p>
 	<footer>
 		<p><em>Last updated on
@@ -1341,7 +1341,7 @@ systemctl restart influxdb
 		</p>
 		<p>
 			The code that makes up this site is licensed for use under the GPLv3; for
-			the full license, click <a href="./LICENSE.txt">here</a>.
+			the full license, click <a href="/LICENSE.txt">here</a>.
 		</p>
 	</footer>
 </body>
