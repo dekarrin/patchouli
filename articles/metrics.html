@@ -228,13 +228,17 @@
 			“flandre”, “patchouli”, etc. No matter what, in order to make your life easier, make
 			sure to use only lower-case characters and dashes; this will also make it so your domain
 			names can be the same as your host names. For the purposes of this guide, I’m going to
-			call mine “meiling”.
+			call mine "meiling".
 		</p>
 		<p>
 			Finally, hit “Create”, give the box a few moments to spin up, and you are done! You
 			should now have an internet-accessible droplet with a static IPv4 address (and a static
 			IPv6 address if you had selected it).
 		</p>
+		<div class="captioned-image">
+			<img src="../images/metrics/digitalocean-droplets.png" width="700px" alt="droplets view">
+			<p>List of droplets. When you've created yours, it will be in this list.<p>
+		</div>
 		<p>
 			Before we log in for the first time, we’ll secure the droplet by setting up a cloud
 			firewall, and we will set up a domain name for the host and put it on a subdomain so we
@@ -1092,9 +1096,18 @@ root@meiling:/home/dekarrin# exit</p>
    Loaded: loaded (/usr/lib/systemd/system/grafana-server.service; disabled; vendor preset: enabled)
    Active: active (running) since Sun 2018-02-18 16:43:28 UTC; 4s ago</p>
    		<p>
-			Finally, enable the Grafan service so that it will automatically start at boot:
+			Next, enable the Grafana service so that it will automatically start at boot:
 		</p>
 		<p class="code">dekarrin@meiling:~$ sudo systemctl enable grafana-server.service</p>
+		<p>
+			Finally, uncomment Grafana's line in the lets-encrypt deploy script so it is restarted
+			when certificates are renewed:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo nano /etc/letsencrypt/etc/letsencrypt/renewal-hooks/deploy/set-cert-permissions.sh</p>
+		<p class="code">  chmod 654 "$RENEWED_LINEAGE/$x"
+done
+systemctl restart influxdb
+<b>systemctl restart grafana-server</b></p>
 		<p>
 			That's it. Assuming everything else ran properly, you should now be able to open up a
 			web browser and navigate to your new Grafana instance, at 'https://your.domain.name'!
@@ -1232,8 +1245,9 @@ root@meiling:/home/dekarrin# exit</p>
 			Note for multi-client setup: If you are monitoring multiple hath clients, you will need
 			to edit some of the prefab panels to work properly. All of the singlestat "Down Clients"
 			panels are optimized for only one client; to make them work with multiple clients, edit
-			the panel and change the 'math' field in the SELECT query to be <span class="literal">math(*-1
-			+ total_clients)</span>, replacing total_clients with the number of clients you have.
+			the panel and change the 'math' field in the SELECT query to be
+			<span class="literal">math(*-1 + total_clients)</span>, replacing total_clients with the
+			number of clients you have.
 		</p>
 		<h2 id="whats-next">Where To Go From Here</h2>
 		<p>

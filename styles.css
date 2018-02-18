@@ -72,13 +72,22 @@ a:hover, a:focus, a:visited:hover, a:visited:focus {
 	font-family: "Courier New", monospace;
 	border-radius: 4px 4px;
 	font-size: smaller;
-	padding: 0 4px;
+	padding: 1px 4px;
 }
 
 p.code {
 	border: 1px solid #909090;
 	overflow: auto;
+}
 
+.literal {
+	white-space: pre;
+	background: #e5e5e5;
+	color: #000000;
+	font-family: "Courier New", monospace;
+	border-radius: 4px 4px;
+	border: 1px solid #bdbdbd;
+	padding: 1px 4px;
 }
 
 h1, h2, h3 {
