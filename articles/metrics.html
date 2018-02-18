@@ -1065,7 +1065,39 @@ root@meiling:/home/dekarrin# exit</p>
 			so it's able to access the SSL/TLS certificates:
 		</p>
 		<p class="code">dekarrin@meiling:~$ sudo usermod -a -G ssl-cert grafana</p>
-
+		<p>
+			Additionally, the typical Grafana install process does not grant Grafana permission to
+			bind to ports lower than 1000. Since it will be using port 443, you will need to grant
+			it that permission manually:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo setcap 'cap_net_bind_service=+ep' /usr/sbin/grafana-server</p>
+		<p>
+			Next, you need to start the grafana service. Tell systemd to reload daemons:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo systemctl daemon-reload</p>
+		<p>
+			And then tell it to start the grafana service:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo systemctl start grafana-server</p>
+		<p>
+			Check on its status, and make sure it is active:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo systemctl status grafana-server
+● grafana-server.service - Grafana instance
+   Loaded: loaded (/usr/lib/systemd/system/grafana-server.service; disabled; vendor preset: enabled)
+   Active: active (running) since Sun 2018-02-18 16:43:28 UTC; 4s ago</p>
+   		<p>
+			Finally, enable the Grafan service so that it will automatically start at boot:
+		</p>
+		<p class="code">dekarrin@meiling:~$ sudo systemctl enable grafana-server.service</p>
+		<p>
+			That's it. Assuming everything else ran properly, you should now be able to open up a
+			web browser and navigate to your new Grafana instance, at 'https://your.domain.name'!
+		</p>
+		<div class="captioned-image">
+			<img src="../images/metrics/grafana-login.png" width="700px" alt="Grafana Login">
+			<p>The default Grafana login page for a fresh install.<p>
+		</div>
 		<h3 id="grafana-charts">Create Charts</h3>
 		<h2 id="whats-next">Where To Go From Here</h2>
 		<h3 id="alerting">Alerting</h3>
